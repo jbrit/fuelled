@@ -8,6 +8,8 @@ import { describe, test, expect } from 'vitest';
  * Can't find these imports? Make sure you've run `fuels build` to generate these with typegen.
  */
 import { TestContractFactory } from '../src/sway-api';
+import { createAssetId } from 'fuels';
+const B256_ZERO = "0x0000000000000000000000000000000000000000000000000000000000000000"
 
 /**
  * Contract Testing
@@ -35,26 +37,34 @@ describe('Contract', () => {
       contracts: [contract],
     } = launched;
 
-    // Lets setup some values to use in the test.
-    const initialCount = 0;
-    const incrementedCount = 5;
+    const contractAssetId = createAssetId(contract.id.toHexString(), B256_ZERO);
+    const baseAssetId = contract.provider.getBaseAssetId();
 
-    // We can now call the contract functions and test the results. Lets assert the initial value of the counter.
-    const { waitForResult: initWaitForResult } = await contract.functions.get_count().call();
-    const { value: initValue } = await initWaitForResult();
-    expect(initValue.toNumber()).toBe(initialCount);
+    const getSupply = async () => {
+      const {waitForResult: supplyWaitForResult} = await contract.functions.total_supply(contractAssetId).call();
+      const {value: supply} = await supplyWaitForResult();
+      return supply?.toBuffer("le", 8).readBigUint64LE();
+    }
 
-    // Next, we'll increment the counter by 5 and assert the new value.
-    const { waitForResult: incrementWaitForResult } = await contract.functions
-      .increment_counter(incrementedCount)
-      .call();
-    const { value: incrementValue } = await incrementWaitForResult();
-    expect(incrementValue.toNumber()).toBe(incrementedCount);
 
-    // Finally, we'll test the get count function again to ensure parity.
-    const { waitForResult: finalWaitForResult } = await contract.functions.get_count().call();
-    const { value: finalValue } = await finalWaitForResult();
-    expect(finalValue.toNumber()).toBe(incrementedCount);
-    expect(initValue.toNumber()).toBeLessThan(finalValue.toNumber());
+    const {waitForResult: ethInWait} = await contract.functions.eth_in_by_token_out(700_000_000).call();
+    const ethIn = await ethInWait();
+    console.log("expected eth in: ", BigInt(ethIn.value.toBuffer("le", 8).readBigUint64LE()))
+    
+    await contract.functions.buy_token(700_000_000,100_000_000).callParams({
+      forward: {
+        amount: 100_000_000,
+        assetId: baseAssetId,
+      }
+    }).call();
+    expect((await getSupply())!).toBe(700000000n)
+
+    await contract.functions.sell_token(100_000_000,0).callParams({
+      forward: {
+        amount: "100000000000000000",  // include decimals
+        assetId: contractAssetId.bits,
+      }
+    }).call();
+    expect((await getSupply())!).toBe(600000000n)
   });
 });
