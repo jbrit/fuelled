@@ -7,10 +7,11 @@ import { describe, test, expect } from 'vitest';
  *
  * Can't find these imports? Make sure you've run `fuels build` to generate these with typegen.
  */
-import { TestContractFactory } from '../src/sway-api';
-import { createAssetId } from 'fuels';
-const B256_ZERO = "0x0000000000000000000000000000000000000000000000000000000000000000"
+import { BondingCurveFactory, MemeFactoryFactory } from '../src/sway-api';
+import { compressBytecode, createAssetId, getMintedAssetId, StructCoder } from 'fuels';
+import { B256_ZERO } from '../src/lib';
 
+StructCoder
 /**
  * Contract Testing
  * 
@@ -27,17 +28,24 @@ describe('Contract', () => {
       // because we are instantiating it with the `using` keyword.
       contractsConfigs: [
         {
-          factory: TestContractFactory,
+          factory: BondingCurveFactory,
         },
+        {
+          factory: MemeFactoryFactory,
+        },
+        {
+          factory: BondingCurveFactory,
+        }
       ],
     });
 
     // We can now destructure the contract from the launched object.
     const {
-      contracts: [contract],
+      contracts: [contract, memefactory],
     } = launched;
+    console.log("b256 address", contract.id.toString());
 
-    const contractAssetId = createAssetId(contract.id.toHexString(), B256_ZERO);
+    const contractAssetId = createAssetId(contract.id.toHexString(), B256_ZERO); // getMintedAssetId
     const baseAssetId = contract.provider.getBaseAssetId();
 
     const getSupply = async () => {
@@ -46,6 +54,13 @@ describe('Contract', () => {
       return supply?.toBuffer("le", 8).readBigUint64LE();
     }
 
+
+    const {waitForResult: registerContractWait} = await memefactory.functions.register_contract({bits: contract.id.toB256()}, "MyAsset", "TOKEN").call();
+    const {value: bytecoderoot} = await registerContractWait();
+    console.log("bytecoderoot", bytecoderoot.Ok);
+
+    const {waitForResult: initWait} = await contract.functions.initialize("MyAsset", "TOKEN").call();
+    // const res = await initWait();
 
     const {waitForResult: ethInWait} = await contract.functions.eth_in_by_token_out(700_000_000).call();
     const ethIn = await ethInWait();

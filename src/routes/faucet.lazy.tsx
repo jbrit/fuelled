@@ -55,7 +55,7 @@ function Index() {
   return (
     <>
       {CURRENT_ENVIRONMENT === Environments.LOCAL && (
-        <>
+        <div className="flex flex-col gap-2 items-center">
           <h3 className="text-2xl font-semibold">Local Faucet</h3>
 
           <div className="flex gap-4 items-center">
@@ -86,7 +86,7 @@ function Index() {
           </div>
 
           <Button onClick={sendFunds}>Send Funds</Button>
-        </>
+        </div>
       )}
 
       {CURRENT_ENVIRONMENT === Environments.TESTNET && (

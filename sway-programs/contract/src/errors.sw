@@ -6,4 +6,6 @@ pub enum BondingCurveError {
     SlippageLimitExceeded: (),
     InsufficientFunds: (),
     InvalidFundsAmount: (),
+    InitializedPool: (),
+    UninitializedPool: (),
 }

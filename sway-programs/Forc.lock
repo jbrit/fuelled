@@ -1,6 +1,35 @@
 [[package]]
+name = "bonding-curve"
+source = "member"
+dependencies = [
+    "libraries",
+    "standards git+https://github.com/FuelLabs/sway-standards?tag=v0.6.1#792639cdf391565e6e6a02482ea8a46d9604a6f5",
+    "std",
+]
+
+[[package]]
 name = "core"
 source = "path+from-root-4BB20845430AF9CF"
+
+[[package]]
+name = "libraries"
+source = "path+from-root-F1B684E95559B92A"
+dependencies = ["std"]
+
+[[package]]
+name = "meme-factory"
+source = "member"
+dependencies = [
+    "libraries",
+    "standards git+https://github.com/FuelLabs/sway-standards?tag=v0.6.1#792639cdf391565e6e6a02482ea8a46d9604a6f5",
+    "std",
+    "sway_libs",
+]
+
+[[package]]
+name = "standards"
+source = "git+https://github.com/FuelLabs/sway-standards?tag=v0.6.0#65e09f95ea8b9476b171a66c8a47108f352fa32c"
+dependencies = ["std"]
 
 [[package]]
 name = "standards"
@@ -13,19 +42,9 @@ source = "git+https://github.com/fuellabs/sway?tag=v0.63.5#31a1d6f98395f571cd367
 dependencies = ["core"]
 
 [[package]]
-name = "test-contract"
-source = "member"
+name = "sway_libs"
+source = "git+https://github.com/fuellabs/sway-libs?tag=v0.24.0#e19f96f85ae12426d20adc176b70aa38fd9a2a5b"
 dependencies = [
-    "standards",
+    "standards git+https://github.com/FuelLabs/sway-standards?tag=v0.6.0#65e09f95ea8b9476b171a66c8a47108f352fa32c",
     "std",
 ]
-
-[[package]]
-name = "test-predicate"
-source = "member"
-dependencies = ["std"]
-
-[[package]]
-name = "test-script"
-source = "member"
-dependencies = ["std"]

@@ -1,8 +1,7 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
-import { TestContract } from "../sway-api";
+import { BondingCurve, BondingCurveFactory, MemeFactory } from "../sway-api";
 import contractIds from "../sway-api/contract-ids.json";
-import { Logo } from "../components/Logo";
-import { bn } from "fuels";
+import { bn, createAssetId, toB256 } from "fuels";
 import { useState } from "react";
 import { Link } from "../components/Link";
 import { Button } from "../components/Button";
@@ -10,97 +9,150 @@ import toast from "react-hot-toast";
 import { useActiveWallet } from "../hooks/useActiveWallet";
 import useAsync from "react-use/lib/useAsync";
 import {
+  B256_ZERO,
   CURRENT_ENVIRONMENT,
   Environments,
-  FAUCET_LINK,
   TESTNET_CONTRACT_ID,
+  TESTNET_MEME_FACTORY_CONTRACT_ID,
 } from "../lib";
+import { Input } from "../components/Input";
 
 export const Route = createLazyFileRoute("/")({
   component: Index,
 });
 
-const contractId =
+const memeFactoryContractId =
   CURRENT_ENVIRONMENT === Environments.LOCAL
-    ? contractIds.testContract
+    ? contractIds.memeFactory
+    : TESTNET_MEME_FACTORY_CONTRACT_ID; // Testnet Contract ID
+
+const bondingCurveContractId =
+  CURRENT_ENVIRONMENT === Environments.LOCAL
+    ? contractIds.bondingCurve
     : TESTNET_CONTRACT_ID; // Testnet Contract ID
 
+console.log("TESTNET_CONTRACT_ID", TESTNET_CONTRACT_ID)
 function Index() {
   const { wallet, walletBalance, refreshWalletBalance } = useActiveWallet();
-  const [contract, setContract] = useState<TestContract>();
-  const [counter, setCounter] = useState<number>();
+  const [contract, setContract] = useState<MemeFactory>();
+  const [bondingCurveFactory, setBondingCurveFactory] = useState<BondingCurveFactory>();
+  const [newCurve, setNewCurve] = useState<BondingCurve>();
+  const [name, setName] = useState<string>();
+  const [symbol, setSymbol] = useState<string>();
+  const [assetId, setAssetId] = useState<string>();
 
-  /**
-   * useAsync is a wrapper around useEffect that allows us to run asynchronous code
-   * See: https://github.com/streamich/react-use/blob/master/docs/useAsync.md
-   */
   useAsync(async () => {
     if (wallet) {
-      // Create a new instance of the contract
-      const testContract = new TestContract(contractId, wallet);
-      setContract(testContract);
+      const curveFactory = new BondingCurveFactory(wallet);
+      setBondingCurveFactory(curveFactory);
 
-      // Read the current value of the counter
-      const { value } = await testContract.functions.get_count().get();
-      setCounter(value.toNumber());
+      // Create a new instance of the contract
+      const memeFactory = new MemeFactory(memeFactoryContractId, wallet);
+      setContract(memeFactory);
     }
   }, [wallet]);
 
-  const onIncrementPressed = async () => {
-    if (!contract) {
+  const onLaunchPress = async () => {
+    if (!!newCurve) {
+      return toast.error("Launch already started");
+    }
+
+    if (!bondingCurveFactory || !contract) {
       return toast.error("Contract not loaded");
     }
 
-    if (walletBalance?.eq(0)) {
-      return toast.error(
-        <span>
-          Your wallet does not have enough funds. Please top it up using the{" "}
-          <Link href={FAUCET_LINK} target="_blank">
-            faucet.
-          </Link>
-        </span>,
-      );
+    if (!wallet) {
+      return toast.error("Wallet not connected");
     }
 
-    // Call the increment_counter function on the contract
-    const { waitForResult } = await contract.functions
-      .increment_counter(bn(1))
-      .call();
+    const { waitForResult } = await bondingCurveFactory.deployAsCreateTx();
+    const { contract: newBondingCurveContract } = await waitForResult();
 
-    // Wait for the transaction to be mined, and then read the value returned
-    const { value } = await waitForResult();
+    const newBondingCurve = new BondingCurve(bondingCurveContractId ?? newBondingCurveContract.id, wallet);
+    setNewCurve(newBondingCurve);
 
-    setCounter(value.toNumber());
-
-    await refreshWalletBalance?.();
+    try {
+      await contract.functions.set_bytecode_root({bits: bondingCurveContractId ?? newBondingCurveContract.id.toB256()}).call();
+      toast.success("bytecoderoot set")
+    } catch {
+    }
   };
 
+  const onFinishLaunchPress = async () => {
+    if (!newCurve || !contract) {
+      return toast.error("Contract not loaded");
+    }
+    const assetId = createAssetId(newCurve.id.toHexString(), B256_ZERO).bits;
+    try {
+      await contract.functions.register_contract({bits: bondingCurveContractId ?? newCurve.id.toB256()}, "TOKEN NAME", "SYMBOL").call();
+      setAssetId(assetId);
+    } catch (error) {
+      // @ts-ignore
+      const message: string = error.message;
+      if (message.includes('"RegisteredToken"')) {
+        toast.error("Token Already Registered");
+        setAssetId(assetId);
+      }
+    }
+    await refreshWalletBalance?.();
+  }
+
   return (
-    <>
-      <div className="flex gap-4 items-center">
-        <Logo />
-      </div>
+    <div className="flex flex-col gap-2 items-center">
+        {/* <div className="flex flex-col gap-2 items-center"> */}
+          <h3 className="text-2xl font-semibold mb-2">Launch A Coin</h3>
 
+          <div className="flex flex-col justify-center">
+            <label htmlFor="token-name" className="text-gray-400">
+              Name:
+            </label>
+            <Input
+              className="w-full"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="ETHEREUM"
+              id="token-name"
+              readOnly={!!newCurve}
+            />
+          </div>
 
-      <>
-        <h3 className="text-xl font-semibold">Counter</h3>
+          <div className="flex flex-col justify-center">
+            <label htmlFor="token-symbol" className="text-gray-400">
+              Symbol:
+            </label>
+            <Input
+              className="w-full"
+              value={symbol}
+              onChange={(e) => setSymbol(e.target.value)}
+              placeholder="ETH"
+              id="token-symbol"
+              readOnly={!!newCurve}
+            />
+          </div>
 
-        <span data-testid="counter" className="text-gray-400 text-6xl">
-          {counter}
-        </span>
+        {/* </div> */}
 
-        <Button onClick={onIncrementPressed} className="mt-6">
-          Increment Counter
+        <Button onClick={onLaunchPress} className="mt-4">
+         &gt;&gt; Launch &lt;&lt;
         </Button>
-      </>
 
-      <Link href="/predicate" className="mt-4">
-        Predicate Example
-      </Link>
+        {!!newCurve && <>
+        <div className="flex flex-col gap-2 items-center">
+          <div>
+            Asset deployed at
+          </div>
+          <div>
+            {createAssetId(newCurve.id.toHexString(), B256_ZERO).bits}
+          </div>
+        </div>
+        <Button onClick={onFinishLaunchPress} className="mt-6">
+         &gt;&gt; Finalize Launch &lt;&lt;
+        </Button>
+        </>}
+        {!!assetId && <>
+        <Link href={`/${assetId}`}>View Asset</Link>
+        </>}
 
-      <Link href="/script" className="mt-4">
-        Script Example
-      </Link>
-    </>
+    </div>
   );
 }

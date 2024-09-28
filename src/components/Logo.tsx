@@ -1,5 +1,6 @@
 export const Logo = () => (
   <svg
+    style={{ height: "4rem", width: "4rem" }}
     width="160"
     height="160"
     viewBox="0 0 160 160"

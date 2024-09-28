@@ -1,3 +1,4 @@
 {
-  "testContract": "dummy-contract-id"
+  "bondingCurve": "0xebea54db519a93d2a6a46c18a8fdb0f9c4ac9021fbc71cdbb259e55d9f90622a",
+  "memeFactory": "0x96625dd39b27dc9cb80209553edfe3b39761652eed52b169c3c236c2cd8cae86"
 }

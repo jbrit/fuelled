@@ -2,8 +2,9 @@
 authors = ["Fuel Labs <contact@fuel.sh>"]
 entry = "main.sw"
 license = "Apache-2.0"
-name = "bonding-curve"
+name = "meme-factory"
 
 [dependencies]
 standards = { git = "https://github.com/FuelLabs/sway-standards", tag = "v0.6.1" }
+sway_libs = { git = "https://github.com/fuellabs/sway-libs", tag = "v0.24.0" }
 libraries = { path = "../libraries" }

@@ -9,6 +9,7 @@ import { WalletDisplay } from "./WalletDisplay";
 import { bn } from "fuels";
 import { useFaucet } from "../hooks/useFaucet";
 import toast from "react-hot-toast";
+import { Logo } from "./Logo";
 
 export const Navbar: FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -25,7 +26,6 @@ export const Navbar: FC = () => {
   const { disconnect } = useDisconnect();
 
   const { wallet, refreshWalletBalance, walletBalance } = useActiveWallet();
-
   const topUpWallet = async () => {
     if (!wallet) {
       return console.error("Unable to topup wallet because wallet is not set.");
@@ -60,7 +60,7 @@ export const Navbar: FC = () => {
     }
   };
 
-  const showTopUpButton = walletBalance?.lt(bn.parseUnits("5"));
+  const showTopUpButton = isBrowserWalletConnected && walletBalance?.lt(bn.parseUnits("5"));
 
   const showAddNetworkButton =
     browserWallet &&
@@ -77,7 +77,7 @@ export const Navbar: FC = () => {
     <>
       {/* Larger screens */}
       <nav className="hidden md:flex justify-between items-center p-4 bg-black text-white gap-6">
-        <Link href="/">Home</Link>
+        <Link href="/"><Logo /></Link>
 
         <Link href="/faucet">Faucet</Link>
 
@@ -93,9 +93,9 @@ export const Navbar: FC = () => {
             Wrong Network
           </Button>
         )}
-
+        
         <div className="ml-auto">
-          <WalletDisplay />
+          {isBrowserWalletConnected && <WalletDisplay />}
         </div>
 
         {showTopUpButton && (
@@ -114,7 +114,7 @@ export const Navbar: FC = () => {
 
         {isMobileMenuOpen && (
           <>
-            <Link href="/">Home</Link>
+            <Link href="/"><Logo /></Link>
 
             <Link href="/faucet">Faucet</Link>
 
@@ -131,9 +131,9 @@ export const Navbar: FC = () => {
               </Button>
             )}
 
-            <div>
+            {isBrowserWalletConnected && (<div>
               <WalletDisplay />
-            </div>
+            </div>)}
 
             {showTopUpButton && (
               <Button onClick={() => topUpWallet()}>Top-up Wallet</Button>

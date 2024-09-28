@@ -1,6 +1,9 @@
 library;
 
 abi BondingCurveAbi {
+    #[storage(read, write)]
+    fn initialize(name: str, symbol: str) -> bool;
+
     #[storage(read)]
     fn eth_in_by_token_out(token_out: u64) -> u64;
     #[storage(read)]

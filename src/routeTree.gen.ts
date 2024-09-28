@@ -13,11 +13,11 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as AssetidImport } from './routes/$assetid'
 
 // Create Virtual Routes
 
 const ScriptLazyImport = createFileRoute('/script')()
-const PredicateLazyImport = createFileRoute('/predicate')()
 const FaucetLazyImport = createFileRoute('/faucet')()
 const IndexLazyImport = createFileRoute('/')()
 
@@ -28,15 +28,15 @@ const ScriptLazyRoute = ScriptLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/script.lazy').then((d) => d.Route))
 
-const PredicateLazyRoute = PredicateLazyImport.update({
-  path: '/predicate',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/predicate.lazy').then((d) => d.Route))
-
 const FaucetLazyRoute = FaucetLazyImport.update({
   path: '/faucet',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/faucet.lazy').then((d) => d.Route))
+
+const AssetidRoute = AssetidImport.update({
+  path: '/$assetid',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
@@ -54,18 +54,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
+    '/$assetid': {
+      id: '/$assetid'
+      path: '/$assetid'
+      fullPath: '/$assetid'
+      preLoaderRoute: typeof AssetidImport
+      parentRoute: typeof rootRoute
+    }
     '/faucet': {
       id: '/faucet'
       path: '/faucet'
       fullPath: '/faucet'
       preLoaderRoute: typeof FaucetLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/predicate': {
-      id: '/predicate'
-      path: '/predicate'
-      fullPath: '/predicate'
-      preLoaderRoute: typeof PredicateLazyImport
       parentRoute: typeof rootRoute
     }
     '/script': {
@@ -82,46 +82,46 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
+  '/$assetid': typeof AssetidRoute
   '/faucet': typeof FaucetLazyRoute
-  '/predicate': typeof PredicateLazyRoute
   '/script': typeof ScriptLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
+  '/$assetid': typeof AssetidRoute
   '/faucet': typeof FaucetLazyRoute
-  '/predicate': typeof PredicateLazyRoute
   '/script': typeof ScriptLazyRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
+  '/$assetid': typeof AssetidRoute
   '/faucet': typeof FaucetLazyRoute
-  '/predicate': typeof PredicateLazyRoute
   '/script': typeof ScriptLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/faucet' | '/predicate' | '/script'
+  fullPaths: '/' | '/$assetid' | '/faucet' | '/script'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/faucet' | '/predicate' | '/script'
-  id: '__root__' | '/' | '/faucet' | '/predicate' | '/script'
+  to: '/' | '/$assetid' | '/faucet' | '/script'
+  id: '__root__' | '/' | '/$assetid' | '/faucet' | '/script'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
+  AssetidRoute: typeof AssetidRoute
   FaucetLazyRoute: typeof FaucetLazyRoute
-  PredicateLazyRoute: typeof PredicateLazyRoute
   ScriptLazyRoute: typeof ScriptLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
+  AssetidRoute: AssetidRoute,
   FaucetLazyRoute: FaucetLazyRoute,
-  PredicateLazyRoute: PredicateLazyRoute,
   ScriptLazyRoute: ScriptLazyRoute,
 }
 
@@ -138,19 +138,19 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/$assetid",
         "/faucet",
-        "/predicate",
         "/script"
       ]
     },
     "/": {
       "filePath": "index.lazy.tsx"
     },
+    "/$assetid": {
+      "filePath": "$assetid.tsx"
+    },
     "/faucet": {
       "filePath": "faucet.lazy.tsx"
-    },
-    "/predicate": {
-      "filePath": "predicate.lazy.tsx"
     },
     "/script": {
       "filePath": "script.lazy.tsx"

@@ -5,11 +5,11 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <Toaster />
-      <div className="flex flex-col bg-black text-white">
-        <Navbar />
-
-        <div className="min-h-screen items-center p-24 flex flex-col gap-6">
-          {children}
+      <div className="flex flex-col px-12 bg-black text-white">
+        <div className="min-h-screen py-4 flex flex-col gap-6">
+          <Navbar />
+          <div className="p-12">{children}</div>
+          <footer className="mt-auto">&copy; fuelled.cash 2024</footer>
         </div>
       </div>
     </>
