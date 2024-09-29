@@ -1,0 +1,25 @@
+enum TradeType {
+  BUY
+  SELL
+}
+
+type Trade {
+  id: ID!
+  tradeType: TradeType!
+  tokenAmount: BigInt!
+  ethAmount: BigInt!
+  trader: String!
+  createdAt: Int!
+  txId: String!
+}
+
+type Pool {
+  id: ID!
+  name: String!
+  symbol: String!
+  asset: String!
+  contract: String!
+  createdBy: String!
+  createdAt: Int!
+  txId: String!
+}

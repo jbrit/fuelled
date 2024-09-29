@@ -1,0 +1,448 @@
+{
+  "programType": "contract",
+  "specVersion": "1",
+  "encodingVersion": "1",
+  "concreteTypes": [
+    {
+      "type": "b256",
+      "concreteTypeId": "7c5ee1cecf5f8eacd1284feb5f0bf2bdea533a51e2f0c9aabe9236d335989f3b"
+    },
+    {
+      "type": "bool",
+      "concreteTypeId": "b760f44fa5965c2474a3b471467a22c43185152129295af588b022ae50b50903"
+    },
+    {
+      "type": "enum MemeFactoryError",
+      "concreteTypeId": "794d29d75983c8fa0cef91c3c63d848ca1251fbc488645ad04feb98f0f414e71",
+      "metadataTypeId": 1
+    },
+    {
+      "type": "enum std::option::Option<b256>",
+      "concreteTypeId": "0c2beb9013490c4f753f2757dfe2d8340b22ce3827d596d81d249b7038033cb6",
+      "metadataTypeId": 3,
+      "typeArguments": [
+        "7c5ee1cecf5f8eacd1284feb5f0bf2bdea533a51e2f0c9aabe9236d335989f3b"
+      ]
+    },
+    {
+      "type": "enum std::result::Result<b256,str>",
+      "concreteTypeId": "72005a1ad434ed967d65131b03a4cc88237886a260812c8996c799ed3067e3cd",
+      "metadataTypeId": 4,
+      "typeArguments": [
+        "7c5ee1cecf5f8eacd1284feb5f0bf2bdea533a51e2f0c9aabe9236d335989f3b",
+        "8c25cb3686462e9a86d2883c5688a22fe738b0bbc85f458d2d2b5f3f667c6d5a"
+      ]
+    },
+    {
+      "type": "str",
+      "concreteTypeId": "8c25cb3686462e9a86d2883c5688a22fe738b0bbc85f458d2d2b5f3f667c6d5a"
+    },
+    {
+      "type": "struct PoolInitialized",
+      "concreteTypeId": "d9dbe86adbbdafc947802be3d76dcf5f684848a0dd096048699992368aa59dd8",
+      "metadataTypeId": 7
+    },
+    {
+      "type": "struct TokenBought",
+      "concreteTypeId": "e642f610cd1c3f7c4fe3f0f632791ea614e3b1ae0fe0020987205992d0fa5014",
+      "metadataTypeId": 8
+    },
+    {
+      "type": "struct TokenSold",
+      "concreteTypeId": "bff64fb7ab914cc84ae1e96229dc5778b595f63b1c2511334d47d8c448e4a3ba",
+      "metadataTypeId": 9
+    },
+    {
+      "type": "struct std::asset_id::AssetId",
+      "concreteTypeId": "c0710b6731b1dd59799cf6bef33eee3b3b04a2e40e80a0724090215bbf2ca974",
+      "metadataTypeId": 11
+    },
+    {
+      "type": "struct std::contract_id::ContractId",
+      "concreteTypeId": "29c10735d33b5159f0c71ee1dbd17b36a3e69e41f00fab0d42e1bd9f428d8a54",
+      "metadataTypeId": 12
+    },
+    {
+      "type": "u64",
+      "concreteTypeId": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0"
+    }
+  ],
+  "metadataTypes": [
+    {
+      "type": "()",
+      "metadataTypeId": 0
+    },
+    {
+      "type": "enum MemeFactoryError",
+      "metadataTypeId": 1,
+      "components": [
+        {
+          "name": "RegisteredToken",
+          "typeId": 0
+        },
+        {
+          "name": "UnregisteredToken",
+          "typeId": 0
+        },
+        {
+          "name": "InitializedFactory",
+          "typeId": 0
+        },
+        {
+          "name": "UninitializedFactory",
+          "typeId": 0
+        },
+        {
+          "name": "ZeroBytecodeRoot",
+          "typeId": 0
+        }
+      ]
+    },
+    {
+      "type": "enum std::identity::Identity",
+      "metadataTypeId": 2,
+      "components": [
+        {
+          "name": "Address",
+          "typeId": 10
+        },
+        {
+          "name": "ContractId",
+          "typeId": 12
+        }
+      ]
+    },
+    {
+      "type": "enum std::option::Option",
+      "metadataTypeId": 3,
+      "components": [
+        {
+          "name": "None",
+          "typeId": 0
+        },
+        {
+          "name": "Some",
+          "typeId": 6
+        }
+      ],
+      "typeParameters": [
+        6
+      ]
+    },
+    {
+      "type": "enum std::result::Result",
+      "metadataTypeId": 4,
+      "components": [
+        {
+          "name": "Ok",
+          "typeId": 6
+        },
+        {
+          "name": "Err",
+          "typeId": 5
+        }
+      ],
+      "typeParameters": [
+        6,
+        5
+      ]
+    },
+    {
+      "type": "generic E",
+      "metadataTypeId": 5
+    },
+    {
+      "type": "generic T",
+      "metadataTypeId": 6
+    },
+    {
+      "type": "struct PoolInitialized",
+      "metadataTypeId": 7,
+      "components": [
+        {
+          "name": "tx_id",
+          "typeId": "7c5ee1cecf5f8eacd1284feb5f0bf2bdea533a51e2f0c9aabe9236d335989f3b"
+        },
+        {
+          "name": "contract_id",
+          "typeId": 12
+        },
+        {
+          "name": "asset_id",
+          "typeId": 11
+        },
+        {
+          "name": "name",
+          "typeId": "8c25cb3686462e9a86d2883c5688a22fe738b0bbc85f458d2d2b5f3f667c6d5a"
+        },
+        {
+          "name": "symbol",
+          "typeId": "8c25cb3686462e9a86d2883c5688a22fe738b0bbc85f458d2d2b5f3f667c6d5a"
+        },
+        {
+          "name": "dev",
+          "typeId": 2
+        }
+      ]
+    },
+    {
+      "type": "struct TokenBought",
+      "metadataTypeId": 8,
+      "components": [
+        {
+          "name": "trader",
+          "typeId": 2
+        },
+        {
+          "name": "asset_id",
+          "typeId": 11
+        },
+        {
+          "name": "amount",
+          "typeId": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0"
+        },
+        {
+          "name": "eth_in",
+          "typeId": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0"
+        }
+      ]
+    },
+    {
+      "type": "struct TokenSold",
+      "metadataTypeId": 9,
+      "components": [
+        {
+          "name": "trader",
+          "typeId": 2
+        },
+        {
+          "name": "asset_id",
+          "typeId": 11
+        },
+        {
+          "name": "amount",
+          "typeId": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0"
+        },
+        {
+          "name": "eth_out",
+          "typeId": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0"
+        }
+      ]
+    },
+    {
+      "type": "struct std::address::Address",
+      "metadataTypeId": 10,
+      "components": [
+        {
+          "name": "bits",
+          "typeId": "7c5ee1cecf5f8eacd1284feb5f0bf2bdea533a51e2f0c9aabe9236d335989f3b"
+        }
+      ]
+    },
+    {
+      "type": "struct std::asset_id::AssetId",
+      "metadataTypeId": 11,
+      "components": [
+        {
+          "name": "bits",
+          "typeId": "7c5ee1cecf5f8eacd1284feb5f0bf2bdea533a51e2f0c9aabe9236d335989f3b"
+        }
+      ]
+    },
+    {
+      "type": "struct std::contract_id::ContractId",
+      "metadataTypeId": 12,
+      "components": [
+        {
+          "name": "bits",
+          "typeId": "7c5ee1cecf5f8eacd1284feb5f0bf2bdea533a51e2f0c9aabe9236d335989f3b"
+        }
+      ]
+    }
+  ],
+  "functions": [
+    {
+      "inputs": [
+        {
+          "name": "child_contract",
+          "concreteTypeId": "29c10735d33b5159f0c71ee1dbd17b36a3e69e41f00fab0d42e1bd9f428d8a54"
+        },
+        {
+          "name": "amount",
+          "concreteTypeId": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0"
+        },
+        {
+          "name": "max_eth_in",
+          "concreteTypeId": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0"
+        }
+      ],
+      "name": "buy_token",
+      "output": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0",
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read",
+            "write"
+          ]
+        },
+        {
+          "name": "payable",
+          "arguments": []
+        }
+      ]
+    },
+    {
+      "inputs": [],
+      "name": "factory_bytecode_root",
+      "output": "0c2beb9013490c4f753f2757dfe2d8340b22ce3827d596d81d249b7038033cb6",
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "asset_id",
+          "concreteTypeId": "c0710b6731b1dd59799cf6bef33eee3b3b04a2e40e80a0724090215bbf2ca974"
+        }
+      ],
+      "name": "get_asset_contract",
+      "output": "29c10735d33b5159f0c71ee1dbd17b36a3e69e41f00fab0d42e1bd9f428d8a54",
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "child_contract",
+          "concreteTypeId": "29c10735d33b5159f0c71ee1dbd17b36a3e69e41f00fab0d42e1bd9f428d8a54"
+        }
+      ],
+      "name": "is_valid",
+      "output": "b760f44fa5965c2474a3b471467a22c43185152129295af588b022ae50b50903",
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "child_contract",
+          "concreteTypeId": "29c10735d33b5159f0c71ee1dbd17b36a3e69e41f00fab0d42e1bd9f428d8a54"
+        },
+        {
+          "name": "name",
+          "concreteTypeId": "8c25cb3686462e9a86d2883c5688a22fe738b0bbc85f458d2d2b5f3f667c6d5a"
+        },
+        {
+          "name": "symbol",
+          "concreteTypeId": "8c25cb3686462e9a86d2883c5688a22fe738b0bbc85f458d2d2b5f3f667c6d5a"
+        }
+      ],
+      "name": "register_contract",
+      "output": "72005a1ad434ed967d65131b03a4cc88237886a260812c8996c799ed3067e3cd",
+      "attributes": [
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " SRC12 adaptation"
+          ]
+        },
+        {
+          "name": "storage",
+          "arguments": [
+            "read",
+            "write"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "child_contract",
+          "concreteTypeId": "29c10735d33b5159f0c71ee1dbd17b36a3e69e41f00fab0d42e1bd9f428d8a54"
+        },
+        {
+          "name": "amount",
+          "concreteTypeId": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0"
+        },
+        {
+          "name": "min_eth_out",
+          "concreteTypeId": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0"
+        }
+      ],
+      "name": "sell_token",
+      "output": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0",
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read",
+            "write"
+          ]
+        },
+        {
+          "name": "payable",
+          "arguments": []
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "child_contract",
+          "concreteTypeId": "29c10735d33b5159f0c71ee1dbd17b36a3e69e41f00fab0d42e1bd9f428d8a54"
+        }
+      ],
+      "name": "set_bytecode_root",
+      "output": "7c5ee1cecf5f8eacd1284feb5f0bf2bdea533a51e2f0c9aabe9236d335989f3b",
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read",
+            "write"
+          ]
+        }
+      ]
+    }
+  ],
+  "loggedTypes": [
+    {
+      "logId": "8740688456692517114",
+      "concreteTypeId": "794d29d75983c8fa0cef91c3c63d848ca1251fbc488645ad04feb98f0f414e71"
+    },
+    {
+      "logId": "16592094529207418748",
+      "concreteTypeId": "e642f610cd1c3f7c4fe3f0f632791ea614e3b1ae0fe0020987205992d0fa5014"
+    },
+    {
+      "logId": "15698396471780814793",
+      "concreteTypeId": "d9dbe86adbbdafc947802be3d76dcf5f684848a0dd096048699992368aa59dd8"
+    },
+    {
+      "logId": "13832330955791092936",
+      "concreteTypeId": "bff64fb7ab914cc84ae1e96229dc5778b595f63b1c2511334d47d8c448e4a3ba"
+    }
+  ],
+  "messagesTypes": [],
+  "configurables": []
+}

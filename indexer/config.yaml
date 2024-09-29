@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=./node_modules/envio/fuel.schema.json
+name: indexer
+ecosystem: fuel
+networks:
+- id: 0
+  start_block: 0
+  contracts:
+  - name: MemeFactory
+    address:
+    - 0x042ddf35a4b1e641a72269f32196cee2ed051dafe75115d1f0c159b1227678db
+    abi_file_path: abis/memefactory-abi.json
+    handler: src/EventHandlers.ts
+    events:
+    - name: PoolInitialized
+    - name: TokenSold
+    - name: TokenBought
