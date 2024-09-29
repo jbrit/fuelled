@@ -25,7 +25,11 @@ use std::{
 };
 
 
-const DECIMALS: u8 = 9u8;
+
+configurable {
+    DECIMALS: u8 = 9u8,
+    BASE_ASSET_ID: b256 = b256::zero(),
+}
 
 storage {
     initialized: bool = false,
@@ -103,7 +107,7 @@ impl BondingCurveAbi for Contract {
     #[storage(read, write), payable]
     fn buy_token(amount: u64, max_eth_in: u64) -> u64 {
         require(storage.initialized.read(), BondingCurveError::UninitializedPool);
-        require(msg_asset_id() == AssetId::base(), BondingCurveError::WrongAsset); // is eth in
+        require(msg_asset_id() == AssetId::from(BASE_ASSET_ID), BondingCurveError::WrongAsset); // is eth in
         let total_supply = storage.total_supply.read();
         require(total_supply + amount <= BONDING_CURVE_SUPPLY, BondingCurveError::TotalSupplyExceeded);
         let eth_in = eth_in_by_token_out(total_supply, amount);
@@ -112,7 +116,7 @@ impl BondingCurveAbi for Contract {
         let to_address = msg_sender().unwrap();
         let eth_left = msg_amount() - eth_in;
         if  eth_left > 0 {
-            transfer(to_address, AssetId::base(), eth_left); // return if remaining
+            transfer(to_address, AssetId::from(BASE_ASSET_ID), eth_left); // return if remaining
         }
         // mint and increase total supply
         mint_to(to_address, DEFAULT_SUB_ID, amount * 10.pow(DECIMALS.as_u32()));  // include decimals

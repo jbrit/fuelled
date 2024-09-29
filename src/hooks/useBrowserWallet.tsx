@@ -1,4 +1,4 @@
-import { AppWallet } from "../lib";
+import { AppWallet, BASE_ASSET_ID } from "../lib";
 import { useIsConnected, useNetwork, useWallet } from "@fuels/react";
 import { BN } from "fuels";
 import { useCallback, useState } from "react";
@@ -21,13 +21,13 @@ export const useBrowserWallet: () => BrowserWallet = () => {
 
   useAsync(async () => {
     if (wallet) {
-      await wallet.getBalance().then(setBrowserWalletBalance);
+      await wallet.getBalance(BASE_ASSET_ID).then(setBrowserWalletBalance);
     }
   }, [wallet]);
 
   const refreshBrowserWalletBalance = useCallback(async () => {
     if (wallet) {
-      const browserWalletBalance = await wallet.getBalance();
+      const browserWalletBalance = await wallet.getBalance(BASE_ASSET_ID);
       setBrowserWalletBalance(browserWalletBalance);
     }
   }, [wallet]);

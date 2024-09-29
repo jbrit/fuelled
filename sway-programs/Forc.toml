@@ -1,2 +1,2 @@
 [workspace]
-members = [ "contract", "factory" ]
+members = [ "contract", "factory", "dummyasset" ]

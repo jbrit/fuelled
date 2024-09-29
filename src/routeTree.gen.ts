@@ -17,16 +17,10 @@ import { Route as AssetidImport } from './routes/$assetid'
 
 // Create Virtual Routes
 
-const ScriptLazyImport = createFileRoute('/script')()
 const FaucetLazyImport = createFileRoute('/faucet')()
 const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
-
-const ScriptLazyRoute = ScriptLazyImport.update({
-  path: '/script',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/script.lazy').then((d) => d.Route))
 
 const FaucetLazyRoute = FaucetLazyImport.update({
   path: '/faucet',
@@ -68,13 +62,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FaucetLazyImport
       parentRoute: typeof rootRoute
     }
-    '/script': {
-      id: '/script'
-      path: '/script'
-      fullPath: '/script'
-      preLoaderRoute: typeof ScriptLazyImport
-      parentRoute: typeof rootRoute
-    }
   }
 }
 
@@ -84,14 +71,12 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/$assetid': typeof AssetidRoute
   '/faucet': typeof FaucetLazyRoute
-  '/script': typeof ScriptLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/$assetid': typeof AssetidRoute
   '/faucet': typeof FaucetLazyRoute
-  '/script': typeof ScriptLazyRoute
 }
 
 export interface FileRoutesById {
@@ -99,15 +84,14 @@ export interface FileRoutesById {
   '/': typeof IndexLazyRoute
   '/$assetid': typeof AssetidRoute
   '/faucet': typeof FaucetLazyRoute
-  '/script': typeof ScriptLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$assetid' | '/faucet' | '/script'
+  fullPaths: '/' | '/$assetid' | '/faucet'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$assetid' | '/faucet' | '/script'
-  id: '__root__' | '/' | '/$assetid' | '/faucet' | '/script'
+  to: '/' | '/$assetid' | '/faucet'
+  id: '__root__' | '/' | '/$assetid' | '/faucet'
   fileRoutesById: FileRoutesById
 }
 
@@ -115,14 +99,12 @@ export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   AssetidRoute: typeof AssetidRoute
   FaucetLazyRoute: typeof FaucetLazyRoute
-  ScriptLazyRoute: typeof ScriptLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   AssetidRoute: AssetidRoute,
   FaucetLazyRoute: FaucetLazyRoute,
-  ScriptLazyRoute: ScriptLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -139,8 +121,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/$assetid",
-        "/faucet",
-        "/script"
+        "/faucet"
       ]
     },
     "/": {
@@ -151,9 +132,6 @@ export const routeTree = rootRoute
     },
     "/faucet": {
       "filePath": "faucet.lazy.tsx"
-    },
-    "/script": {
-      "filePath": "script.lazy.tsx"
     }
   }
 }

@@ -3,10 +3,11 @@ import { Button } from "../components/Button";
 import { Input } from "../components/Input";
 import { useActiveWallet } from "../hooks/useActiveWallet";
 import { useFaucet } from "../hooks/useFaucet";
-import { bn } from "fuels";
+import { bn, Provider } from "fuels";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { CURRENT_ENVIRONMENT, Environments, TESTNET_FAUCET_LINK } from "../lib";
+import { B256_ZERO, BASE_ASSET_CONTRACT_ID, CURRENT_ENVIRONMENT, Environments, NODE_URL, TESTNET_FAUCET_LINK } from "../lib";
+import { DummyAsset } from "../sway-api";
 
 export const Route = createLazyFileRoute("/faucet")({
   component: Index,
@@ -28,8 +29,8 @@ function Index() {
   }, [wallet]);
 
   const sendFunds = async () => {
-    if (!faucetWallet) {
-      return toast.error("Faucet wallet not found.");
+    if (!wallet) {
+      return toast.error("Wallet not connected.");
     }
 
     if (!receiverAddress) {
@@ -40,8 +41,11 @@ function Index() {
       return toast.error("Amount cannot be empty");
     }
 
+    const dummyAsset = new DummyAsset(BASE_ASSET_CONTRACT_ID, wallet);
+    await dummyAsset.functions.mint({Address: {bits: receiverAddress}}, B256_ZERO, parseInt(amountToSend)*1e9).call();
+
     // Transfer the specified amount of ETH to the receiver address
-    const tx = await faucetWallet.transfer(
+    const tx = await faucetWallet!.transfer(
       receiverAddress,
       bn.parseUnits(amountToSend.toString()),
     );
@@ -54,7 +58,7 @@ function Index() {
 
   return (
     <>
-      {CURRENT_ENVIRONMENT === Environments.LOCAL && (
+      {CURRENT_ENVIRONMENT === Environments.TESTNET && (
         <div className="flex flex-col gap-2 items-center">
           <h3 className="text-2xl font-semibold">Local Faucet</h3>
 
@@ -73,7 +77,7 @@ function Index() {
 
           <div className="flex gap-4 items-center">
             <label htmlFor="amount-input" className="text-gray-400">
-              Amount (ETH):
+              Amount (FAKEETH):
             </label>
             <Input
               className="w-full"
@@ -89,7 +93,7 @@ function Index() {
         </div>
       )}
 
-      {CURRENT_ENVIRONMENT === Environments.TESTNET && (
+      {CURRENT_ENVIRONMENT === Environments.TESTNET+"k" && (
         <>
           <iframe
             src={

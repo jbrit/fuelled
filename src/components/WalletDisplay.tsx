@@ -30,7 +30,7 @@ export const WalletDisplay = () => {
           {walletBalance?.format({
             precision: 3,
           })}{" "}
-          ETH
+          FAKEETH
         </span>
       </div>
     )

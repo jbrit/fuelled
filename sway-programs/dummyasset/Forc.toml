@@ -2,6 +2,7 @@
 authors = ["jibola <pro.ajibolaojo@gmail.com>"]
 entry = "main.sw"
 license = "Apache-2.0"
-name = "test-predicate"
+name = "dummy-asset"
 
 [dependencies]
+standards = { git = "https://github.com/FuelLabs/sway-standards", tag = "v0.6.1" }

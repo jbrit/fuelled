@@ -2,7 +2,7 @@ import { createLazyFileRoute } from "@tanstack/react-router";
 import { BondingCurve, BondingCurveFactory, MemeFactory } from "../sway-api";
 import contractIds from "../sway-api/contract-ids.json";
 import { bn, createAssetId, toB256 } from "fuels";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "../components/Link";
 import { Button } from "../components/Button";
 import toast from "react-hot-toast";
@@ -10,6 +10,7 @@ import { useActiveWallet } from "../hooks/useActiveWallet";
 import useAsync from "react-use/lib/useAsync";
 import {
   B256_ZERO,
+  BASE_ASSET_ID,
   CURRENT_ENVIRONMENT,
   Environments,
   TESTNET_CONTRACT_ID,
@@ -31,60 +32,70 @@ const bondingCurveContractId =
     ? contractIds.bondingCurve
     : TESTNET_CONTRACT_ID; // Testnet Contract ID
 
-console.log("TESTNET_CONTRACT_ID", TESTNET_CONTRACT_ID)
 function Index() {
   const { wallet, walletBalance, refreshWalletBalance } = useActiveWallet();
-  const [contract, setContract] = useState<MemeFactory>();
+  const [memeFactorycontract, setMemeFactoryContract] = useState<MemeFactory>();
   const [bondingCurveFactory, setBondingCurveFactory] = useState<BondingCurveFactory>();
   const [newCurve, setNewCurve] = useState<BondingCurve>();
   const [name, setName] = useState<string>();
   const [symbol, setSymbol] = useState<string>();
   const [assetId, setAssetId] = useState<string>();
 
-  useAsync(async () => {
+  useEffect(() => {
     if (wallet) {
       const curveFactory = new BondingCurveFactory(wallet);
       setBondingCurveFactory(curveFactory);
 
       // Create a new instance of the contract
       const memeFactory = new MemeFactory(memeFactoryContractId, wallet);
-      setContract(memeFactory);
+      setMemeFactoryContract(memeFactory);
     }
-  }, [wallet]);
+  }, [wallet, memeFactoryContractId])
 
   const onLaunchPress = async () => {
     if (!!newCurve) {
       return toast.error("Launch already started");
     }
 
-    if (!bondingCurveFactory || !contract) {
-      return toast.error("Contract not loaded");
-    }
-
     if (!wallet) {
       return toast.error("Wallet not connected");
     }
 
-    const { waitForResult } = await bondingCurveFactory.deployAsCreateTx();
+    if (!name || !symbol) {
+      return toast.error("Name and Symbol required");
+    }
+
+    if (!bondingCurveFactory || !memeFactorycontract) {
+      return toast.error("Contract not loaded");
+    }
+
+    const { waitForResult } = await bondingCurveFactory.deployAsCreateTx({
+      configurableConstants: {
+        BASE_ASSET_ID
+      }
+    });
     const { contract: newBondingCurveContract } = await waitForResult();
 
     const newBondingCurve = new BondingCurve(bondingCurveContractId ?? newBondingCurveContract.id, wallet);
     setNewCurve(newBondingCurve);
 
     try {
-      await contract.functions.set_bytecode_root({bits: bondingCurveContractId ?? newBondingCurveContract.id.toB256()}).call();
+      await memeFactorycontract.functions.set_bytecode_root({bits: bondingCurveContractId ?? newBondingCurveContract.id.toB256()}).call();
       toast.success("bytecoderoot set")
     } catch {
     }
   };
 
   const onFinishLaunchPress = async () => {
-    if (!newCurve || !contract) {
+    if (!newCurve || !memeFactorycontract) {
       return toast.error("Contract not loaded");
+    }
+    if (!name || !symbol) {
+      return toast.error("Name and Symbol required");
     }
     const assetId = createAssetId(newCurve.id.toHexString(), B256_ZERO).bits;
     try {
-      await contract.functions.register_contract({bits: bondingCurveContractId ?? newCurve.id.toB256()}, "TOKEN NAME", "SYMBOL").call();
+      await memeFactorycontract.functions.register_contract({bits: bondingCurveContractId ?? newCurve.id.toB256()}, name, symbol).call();
       setAssetId(assetId);
     } catch (error) {
       // @ts-ignore

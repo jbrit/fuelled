@@ -8,13 +8,33 @@ use std::{
     external::bytecode_root,
     hash::{Hash, sha256,},
     storage::storage_vec::*,
+    tx::tx_id,
 };
 use sway_libs::bytecode::*;
 use libraries::BondingCurveAbi;
 
 // events
-enum PoolInitialized {
+struct PoolInitialized {
+    pub tx_id: b256,
+    pub contract_id: ContractId,
+    pub asset_id: AssetId,
+    pub name: str,
+    pub symbol: str,
+    pub dev: Identity,
+}
 
+struct TokenSold {
+    pub trader: Identity,
+    pub asset_id: AssetId,
+    pub amount: u64,
+    pub eth_out: u64,
+}
+
+struct TokenBought {
+    pub trader: Identity,
+    pub asset_id: AssetId,
+    pub amount: u64,
+    pub eth_in: u64,
 }
 
 
@@ -62,20 +82,34 @@ impl MemeFactoryAbi for Contract {
     fn buy_token(child_contract: ContractId, amount: u64, max_eth_in: u64) -> u64 {
         require(storage.registered_contracts.get(child_contract).try_read().unwrap_or(false), MemeFactoryError::UnregisteredToken);
         let caller_contract = abi(BondingCurveAbi, child_contract.bits());
-        caller_contract.buy_token {
+        let eth_in = caller_contract.buy_token {
             asset_id: msg_asset_id().bits(),
             coins: msg_amount()
-        }(amount, max_eth_in)
+        }(amount, max_eth_in);
+        log(TokenBought {
+            trader: msg_sender().unwrap(),
+            asset_id: AssetId::new(child_contract, DEFAULT_SUB_ID),
+            amount: amount,
+            eth_in: eth_in,
+        });
+        eth_in
     }
 
     #[storage(read, write), payable]
     fn sell_token(child_contract: ContractId, amount: u64, min_eth_out: u64) -> u64 {
         require(storage.registered_contracts.get(child_contract).try_read().unwrap_or(false), MemeFactoryError::UnregisteredToken);
         let caller_contract = abi(BondingCurveAbi, child_contract.bits());
-        caller_contract.sell_token {
+        let eth_out = caller_contract.sell_token {
             asset_id: msg_asset_id().bits(),
             coins: msg_amount()
-        }(amount, min_eth_out)
+        }(amount, min_eth_out);
+        log(TokenSold {
+            trader: msg_sender().unwrap(),
+            asset_id: AssetId::new(child_contract, DEFAULT_SUB_ID),
+            amount: amount,
+            eth_out: eth_out,
+        });
+        eth_out
     }
 
     #[storage(read, write)]
@@ -110,7 +144,16 @@ impl MemeFactoryAbi for Contract {
         }
  
         storage.registered_contracts.insert(child_contract, true);
-        storage.registered_assets.insert(AssetId::new(child_contract, DEFAULT_SUB_ID), child_contract);
+        let asset_id = AssetId::new(child_contract, DEFAULT_SUB_ID);
+        storage.registered_assets.insert(asset_id, child_contract);
+        log(PoolInitialized{
+            dev: msg_sender().unwrap(),
+            tx_id: tx_id(),
+            contract_id: child_contract,
+            asset_id: asset_id,
+            name: name,
+            symbol: symbol,
+        });
 
         Result::Ok(returned_root)
     }
