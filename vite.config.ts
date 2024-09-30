@@ -6,6 +6,11 @@ import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   return {
+    resolve: {
+      alias: {
+        "@/": "/",
+      },
+    },
     define: {
       'process.env': env,
     },
