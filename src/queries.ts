@@ -20,6 +20,7 @@ export const ALL_TRADES_QUERY = gql(`query AllTrades {
     db_write_timestamp
     ethAmount
     id
+    token
     tokenAmount
     tradeType
     trader

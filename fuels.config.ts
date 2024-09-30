@@ -12,6 +12,6 @@ const fuelCorePort = +(process.env.VITE_FUEL_NODE_PORT as string) || 4000;
 export default createConfig({
   workspace: './sway-programs', // Path to your Sway workspace
   output: './src/sway-api', // Where your generated types will be saved
-  fuelCorePort,
-  providerUrl: NODE_URL,
+  fuelCorePort: 40000,
+  providerUrl: 'http://127.0.0.1:40000/v1/graphql',
 });

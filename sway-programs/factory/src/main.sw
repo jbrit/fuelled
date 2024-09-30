@@ -44,6 +44,7 @@ enum MemeFactoryError {
     InitializedFactory: (),
     UninitializedFactory: (),
     ZeroBytecodeRoot: (),
+    InvalidBytecodeRoot: (),
 }
 
 storage {
@@ -85,7 +86,7 @@ impl MemeFactoryAbi for Contract {
         let eth_in = caller_contract.buy_token {
             asset_id: msg_asset_id().bits(),
             coins: msg_amount()
-        }(amount, max_eth_in);
+        }(msg_sender().unwrap(), amount, max_eth_in);
         log(TokenBought {
             trader: msg_sender().unwrap(),
             asset_id: AssetId::new(child_contract, DEFAULT_SUB_ID),
@@ -102,7 +103,7 @@ impl MemeFactoryAbi for Contract {
         let eth_out = caller_contract.sell_token {
             asset_id: msg_asset_id().bits(),
             coins: msg_amount()
-        }(amount, min_eth_out);
+        }(msg_sender().unwrap(), amount, min_eth_out);
         log(TokenSold {
             trader: msg_sender().unwrap(),
             asset_id: AssetId::new(child_contract, DEFAULT_SUB_ID),
@@ -136,16 +137,14 @@ impl MemeFactoryAbi for Contract {
         require(storage.template_bytecode_root.read() != b256::zero(), MemeFactoryError::UninitializedFactory);
         require(!storage.registered_contracts.get(child_contract).try_read().unwrap_or(false), MemeFactoryError::RegisteredToken);
         let returned_root = bytecode_root(child_contract);
- 
-        if returned_root != storage.template_bytecode_root.read() {
-            return Result::Err(
-                "The deployed contract's bytecode root and expected contract bytecode root do not match",
-            );
-        }
- 
+        // The deployed contract's bytecode root and expected contract bytecode root do not match
+        require(returned_root == storage.template_bytecode_root.read(), MemeFactoryError::InvalidBytecodeRoot);
+
         storage.registered_contracts.insert(child_contract, true);
         let asset_id = AssetId::new(child_contract, DEFAULT_SUB_ID);
         storage.registered_assets.insert(asset_id, child_contract);
+        let caller_contract = abi(BondingCurveAbi, child_contract.bits());
+        caller_contract.initialize(name, symbol);
         log(PoolInitialized{
             dev: msg_sender().unwrap(),
             tx_id: tx_id(),

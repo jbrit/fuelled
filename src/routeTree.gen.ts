@@ -13,12 +13,13 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as LaunchImport } from './routes/launch'
 import { Route as AssetidImport } from './routes/$assetid'
+import { Route as IndexImport } from './routes/index'
 
 // Create Virtual Routes
 
 const FaucetLazyImport = createFileRoute('/faucet')()
-const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
 
@@ -27,15 +28,20 @@ const FaucetLazyRoute = FaucetLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/faucet.lazy').then((d) => d.Route))
 
+const LaunchRoute = LaunchImport.update({
+  path: '/launch',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const AssetidRoute = AssetidImport.update({
   path: '/$assetid',
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexLazyRoute = IndexLazyImport.update({
+const IndexRoute = IndexImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+} as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -45,7 +51,7 @@ declare module '@tanstack/react-router' {
       id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexLazyImport
+      preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
     '/$assetid': {
@@ -53,6 +59,13 @@ declare module '@tanstack/react-router' {
       path: '/$assetid'
       fullPath: '/$assetid'
       preLoaderRoute: typeof AssetidImport
+      parentRoute: typeof rootRoute
+    }
+    '/launch': {
+      id: '/launch'
+      path: '/launch'
+      fullPath: '/launch'
+      preLoaderRoute: typeof LaunchImport
       parentRoute: typeof rootRoute
     }
     '/faucet': {
@@ -68,42 +81,47 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexLazyRoute
+  '/': typeof IndexRoute
   '/$assetid': typeof AssetidRoute
+  '/launch': typeof LaunchRoute
   '/faucet': typeof FaucetLazyRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexLazyRoute
+  '/': typeof IndexRoute
   '/$assetid': typeof AssetidRoute
+  '/launch': typeof LaunchRoute
   '/faucet': typeof FaucetLazyRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexLazyRoute
+  '/': typeof IndexRoute
   '/$assetid': typeof AssetidRoute
+  '/launch': typeof LaunchRoute
   '/faucet': typeof FaucetLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$assetid' | '/faucet'
+  fullPaths: '/' | '/$assetid' | '/launch' | '/faucet'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$assetid' | '/faucet'
-  id: '__root__' | '/' | '/$assetid' | '/faucet'
+  to: '/' | '/$assetid' | '/launch' | '/faucet'
+  id: '__root__' | '/' | '/$assetid' | '/launch' | '/faucet'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexLazyRoute: typeof IndexLazyRoute
+  IndexRoute: typeof IndexRoute
   AssetidRoute: typeof AssetidRoute
+  LaunchRoute: typeof LaunchRoute
   FaucetLazyRoute: typeof FaucetLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexLazyRoute: IndexLazyRoute,
+  IndexRoute: IndexRoute,
   AssetidRoute: AssetidRoute,
+  LaunchRoute: LaunchRoute,
   FaucetLazyRoute: FaucetLazyRoute,
 }
 
@@ -121,14 +139,18 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/$assetid",
+        "/launch",
         "/faucet"
       ]
     },
     "/": {
-      "filePath": "index.lazy.tsx"
+      "filePath": "index.tsx"
     },
     "/$assetid": {
       "filePath": "$assetid.tsx"
+    },
+    "/launch": {
+      "filePath": "launch.tsx"
     },
     "/faucet": {
       "filePath": "faucet.lazy.tsx"

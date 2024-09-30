@@ -3,10 +3,10 @@ import { Button } from "../components/Button";
 import { Input } from "../components/Input";
 import { useActiveWallet } from "../hooks/useActiveWallet";
 import { useFaucet } from "../hooks/useFaucet";
-import { bn, Provider } from "fuels";
+import { bn } from "fuels";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { B256_ZERO, BASE_ASSET_CONTRACT_ID, CURRENT_ENVIRONMENT, Environments, NODE_URL, TESTNET_FAUCET_LINK } from "../lib";
+import { B256_ZERO, BASE_ASSET_CONTRACT_ID, CURRENT_ENVIRONMENT, Environments, TESTNET_FAUCET_LINK } from "../lib";
 import { DummyAsset } from "../sway-api";
 
 export const Route = createLazyFileRoute("/faucet")({

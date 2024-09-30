@@ -8,8 +8,8 @@ import { describe, test, expect } from 'vitest';
  * Can't find these imports? Make sure you've run `fuels build` to generate these with typegen.
  */
 import { BondingCurveFactory, MemeFactoryFactory } from '../src/sway-api';
-import { compressBytecode, createAssetId, getMintedAssetId, StructCoder } from 'fuels';
-import { B256_ZERO } from '../src/lib';
+import { createAssetId, getMintedAssetId, StructCoder } from 'fuels';
+import { B256_ZERO, BASE_ASSET_ID } from '../src/lib';
 
 StructCoder
 /**
@@ -29,13 +29,15 @@ describe('Contract', () => {
       contractsConfigs: [
         {
           factory: BondingCurveFactory,
+          options: {
+            configurableConstants: {
+              BASE_ASSET_ID: "0xf8f8b6283d7fa5b672b530cbb84fcccb4ff8dc40f8176ef4544ddb1f1952ad07"
+            }
+          }
         },
         {
           factory: MemeFactoryFactory,
         },
-        {
-          factory: BondingCurveFactory,
-        }
       ],
     });
 
@@ -47,6 +49,8 @@ describe('Contract', () => {
 
     const contractAssetId = createAssetId(contract.id.toHexString(), B256_ZERO); // getMintedAssetId
     const baseAssetId = contract.provider.getBaseAssetId();
+    console.log({baseAssetId})
+    // const baseAssetId = BASE_ASSET_ID;
 
     const getSupply = async () => {
       const {waitForResult: supplyWaitForResult} = await contract.functions.total_supply(contractAssetId).call();
@@ -54,27 +58,42 @@ describe('Contract', () => {
       return supply?.toBuffer("le", 8).readBigUint64LE();
     }
 
-
-    const {waitForResult: registerContractWait} = await memefactory.functions.register_contract({bits: contract.id.toB256()}, "MyAsset", "TOKEN").call();
+    const {value: optionalbytecoderoot} = await memefactory.functions.factory_bytecode_root().get();
+    if (optionalbytecoderoot === B256_ZERO) {
+      const {waitForResult: setBCRContractWait} = await memefactory.functions.set_bytecode_root({bits: contract.id.toB256()}).call();
+      const {value: newbcr} = await setBCRContractWait();
+      console.log("newbcr", newbcr);
+    }
+    // await contract.functions.initialize("MyAsset", "TOKEN").call()
+    const rc = await memefactory.functions.register_contract({bits: contract.id.toB256()}, "MyAsset", "TOKEN").addContracts([contract]).fundWithRequiredCoins();
+    console.log("maxFee", rc.maxFee.toBuffer("le", 8).readBigUInt64LE())
+    console.log("gasLimit", rc.gasLimit.toBuffer("le", 8).readBigUInt64LE())
+    const {waitForResult: registerContractWait} = await memefactory.functions.register_contract({bits: contract.id.toB256()}, "MyAsset", "TOKEN").addContracts([contract]).call();
     const {value: bytecoderoot} = await registerContractWait();
     console.log("bytecoderoot", bytecoderoot.Ok);
-
-    const {waitForResult: initWait} = await contract.functions.initialize("MyAsset", "TOKEN").call();
-    // const res = await initWait();
 
     const {waitForResult: ethInWait} = await contract.functions.eth_in_by_token_out(700_000_000).call();
     const ethIn = await ethInWait();
     console.log("expected eth in: ", BigInt(ethIn.value.toBuffer("le", 8).readBigUint64LE()))
-    
-    await contract.functions.buy_token(700_000_000,100_000_000).callParams({
+    // {bits: contract.id.toB256()}
+    const contractIdInput = {bits: contract.id.toB256()};
+    const {waitForResult: buyWait} = await memefactory.functions.buy_token(contractIdInput,700_000_000,100_000_000).addContracts([contract]).callParams({
       forward: {
         amount: 100_000_000,
         assetId: baseAssetId,
       }
     }).call();
+    const {value: realEthIn} = await buyWait();
+    console.log({realEthIn})
+    // await contract.functions.buy_token(700_000_000,100_000_000).callParams({
+    //   forward: {
+    //     amount: 100_000_000,
+    //     assetId: baseAssetId,
+    //   }
+    // }).call();
     expect((await getSupply())!).toBe(700000000n)
 
-    await contract.functions.sell_token(100_000_000,0).callParams({
+    await memefactory.functions.sell_token(contractIdInput,100_000_000,0).callParams({
       forward: {
         amount: "100000000000000000",  // include decimals
         assetId: contractAssetId.bits,

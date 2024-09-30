@@ -79,7 +79,8 @@ export const Navbar: FC = () => {
       <nav className="hidden md:flex justify-between items-center p-4 bg-black text-white gap-6">
         <Link href="/"><Logo /></Link>
 
-        <Link href="/faucet">Faucet</Link>
+        <Link href="/launch">launch</Link>
+        <Link href="/faucet">faucet</Link>
 
         {isBrowserWalletConnected && (
           <Button onClick={disconnect}>Disconnect Wallet</Button>
@@ -116,7 +117,8 @@ export const Navbar: FC = () => {
           <>
             <Link href="/"><Logo /></Link>
 
-            <Link href="/faucet">Faucet</Link>
+            <Link href="/launch">launch</Link>
+            <Link href="/faucet">faucet</Link>
 
             {isBrowserWalletConnected && (
               <Button onClick={disconnect}>Disconnect Wallet</Button>

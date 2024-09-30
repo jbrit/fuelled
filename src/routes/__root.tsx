@@ -52,18 +52,18 @@ export const Route = createRootRoute({
                */
               connectors: [
                 new FuelWalletConnector(),
-                new BurnerWalletConnector({
-                  fuelProvider: providerToUse,
-                }),
-                new WalletConnectConnector({
-                  fuelProvider: providerToUse,
-                }),
-                new BakoSafeConnector(),
-                new FueletWalletConnector(),
-                new FuelWalletDevelopmentConnector(),
-                new SolanaConnector({
-                  fuelProvider: providerToUse,
-                }),
+                // new BurnerWalletConnector({
+                //   fuelProvider: providerToUse,
+                // }),
+                // new WalletConnectConnector({
+                //   fuelProvider: providerToUse,
+                // }),
+                // new BakoSafeConnector(),
+                // new FueletWalletConnector(),
+                // new FuelWalletDevelopmentConnector(),
+                // new SolanaConnector({
+                //   fuelProvider: providerToUse,
+                // }),
               ],
             }}
           >

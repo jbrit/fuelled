@@ -31,8 +31,7 @@ export const FAUCET_PRIVATE_KEY = '0x01';
 
 export const DOCS_URL = 'https://docs.fuel.network';
 
-export const TESTNET_CONTRACT_ID = process.env.VITE_TESTNET_CONTRACT_ID;
-export const TESTNET_MEME_FACTORY_CONTRACT_ID = process.env.TESTNET_MEME_FACTORY_CONTRACT_ID as string;
+export const TESTNET_MEME_FACTORY_CONTRACT_ID = process.env.VITE_TESTNET_MEME_FACTORY_CONTRACT_ID as string;
 export const B256_ZERO = "0x0000000000000000000000000000000000000000000000000000000000000000";
-export const BASE_ASSET_CONTRACT_ID = process.env.BASE_ASSET_CONTRACT_ID as string;
+export const BASE_ASSET_CONTRACT_ID = process.env.VITE_BASE_ASSET_CONTRACT_ID as string;
 export const BASE_ASSET_ID = createAssetId(BASE_ASSET_CONTRACT_ID, B256_ZERO).bits;

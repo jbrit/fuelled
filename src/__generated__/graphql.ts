@@ -175,6 +175,7 @@ export type Trade = {
   db_write_timestamp?: Maybe<Scalars['timestamp']['output']>;
   ethAmount: Scalars['numeric']['output'];
   id: Scalars['String']['output'];
+  token: Scalars['String']['output'];
   tokenAmount: Scalars['numeric']['output'];
   tradeType: Scalars['tradetype']['output'];
   trader: Scalars['String']['output'];
@@ -190,6 +191,7 @@ export type Trade_Bool_Exp = {
   db_write_timestamp?: InputMaybe<Timestamp_Comparison_Exp>;
   ethAmount?: InputMaybe<Numeric_Comparison_Exp>;
   id?: InputMaybe<String_Comparison_Exp>;
+  token?: InputMaybe<String_Comparison_Exp>;
   tokenAmount?: InputMaybe<Numeric_Comparison_Exp>;
   tradeType?: InputMaybe<Tradetype_Comparison_Exp>;
   trader?: InputMaybe<String_Comparison_Exp>;
@@ -202,6 +204,7 @@ export type Trade_Order_By = {
   db_write_timestamp?: InputMaybe<Order_By>;
   ethAmount?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  token?: InputMaybe<Order_By>;
   tokenAmount?: InputMaybe<Order_By>;
   tradeType?: InputMaybe<Order_By>;
   trader?: InputMaybe<Order_By>;
@@ -218,6 +221,8 @@ export enum Trade_Select_Column {
   EthAmount = 'ethAmount',
   /** column name */
   Id = 'id',
+  /** column name */
+  Token = 'token',
   /** column name */
   TokenAmount = 'tokenAmount',
   /** column name */
@@ -242,6 +247,7 @@ export type Trade_Stream_Cursor_Value_Input = {
   db_write_timestamp?: InputMaybe<Scalars['timestamp']['input']>;
   ethAmount?: InputMaybe<Scalars['numeric']['input']>;
   id?: InputMaybe<Scalars['String']['input']>;
+  token?: InputMaybe<Scalars['String']['input']>;
   tokenAmount?: InputMaybe<Scalars['numeric']['input']>;
   tradeType?: InputMaybe<Scalars['tradetype']['input']>;
   trader?: InputMaybe<Scalars['String']['input']>;
@@ -1729,8 +1735,8 @@ export type AllPoolsQuery = { __typename?: 'query_root', Pool: Array<{ __typenam
 export type AllTradesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AllTradesQuery = { __typename?: 'query_root', Trade: Array<{ __typename?: 'Trade', createdAt: number, db_write_timestamp?: any | null, ethAmount: any, id: string, tokenAmount: any, tradeType: any, trader: string, txId: string }> };
+export type AllTradesQuery = { __typename?: 'query_root', Trade: Array<{ __typename?: 'Trade', createdAt: number, db_write_timestamp?: any | null, ethAmount: any, id: string, token: string, tokenAmount: any, tradeType: any, trader: string, txId: string }> };
 
 
 export const AllPoolsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AllPools"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Pool"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"txId"}},{"kind":"Field","name":{"kind":"Name","value":"asset"}},{"kind":"Field","name":{"kind":"Name","value":"contract"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"db_write_timestamp"}}]}}]}}]} as unknown as DocumentNode<AllPoolsQuery, AllPoolsQueryVariables>;
-export const AllTradesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AllTrades"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Trade"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"db_write_timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"ethAmount"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"tokenAmount"}},{"kind":"Field","name":{"kind":"Name","value":"tradeType"}},{"kind":"Field","name":{"kind":"Name","value":"trader"}},{"kind":"Field","name":{"kind":"Name","value":"txId"}}]}}]}}]} as unknown as DocumentNode<AllTradesQuery, AllTradesQueryVariables>;
+export const AllTradesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AllTrades"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Trade"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"db_write_timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"ethAmount"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"tokenAmount"}},{"kind":"Field","name":{"kind":"Name","value":"tradeType"}},{"kind":"Field","name":{"kind":"Name","value":"trader"}},{"kind":"Field","name":{"kind":"Name","value":"txId"}}]}}]}}]} as unknown as DocumentNode<AllTradesQuery, AllTradesQueryVariables>;

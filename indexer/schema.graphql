@@ -11,6 +11,7 @@ type Trade {
   trader: String!
   createdAt: Int!
   txId: String!
+  token: String!
 }
 
 type Pool {

@@ -10,8 +10,8 @@ abi BondingCurveAbi {
     fn eth_out_by_token_in(token_in: u64) -> u64;
 
     #[storage(read, write), payable]
-    fn buy_token(amount: u64, max_eth_in: u64) -> u64;
+    fn buy_token(recepient: Identity, amount: u64, max_eth_in: u64) -> u64;
 
     #[storage(read, write), payable]
-    fn sell_token(amount: u64, min_eth_out: u64) -> u64;
+    fn sell_token(recepient: Identity, amount: u64, min_eth_out: u64) -> u64;
 }

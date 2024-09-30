@@ -28,7 +28,7 @@ use std::{
 
 configurable {
     DECIMALS: u8 = 9u8,
-    BASE_ASSET_ID: b256 = b256::zero(),
+    BASE_ASSET_ID: b256 = 0x8494fa8c29ecb86a75d977ccea0db6d1824f8429c717cef4b9b9ae0e29a765a5,
 }
 
 storage {
@@ -86,7 +86,6 @@ impl BondingCurveAbi for Contract {
     #[storage(read, write)]
     fn initialize(name: str, symbol: str) -> bool {
         require(!storage.initialized.read(), BondingCurveError::InitializedPool);
-        let to_address = msg_sender().unwrap();
         storage.initialized.write(true);
         storage.name.write_slice(String::from_ascii_str(name));
         storage.symbol.write_slice(String::from_ascii_str(symbol));
@@ -105,7 +104,7 @@ impl BondingCurveAbi for Contract {
 
 
     #[storage(read, write), payable]
-    fn buy_token(amount: u64, max_eth_in: u64) -> u64 {
+    fn buy_token(recepient: Identity, amount: u64, max_eth_in: u64) -> u64 {
         require(storage.initialized.read(), BondingCurveError::UninitializedPool);
         require(msg_asset_id() == AssetId::from(BASE_ASSET_ID), BondingCurveError::WrongAsset); // is eth in
         let total_supply = storage.total_supply.read();
@@ -113,36 +112,28 @@ impl BondingCurveAbi for Contract {
         let eth_in = eth_in_by_token_out(total_supply, amount);
         require(eth_in <= msg_amount(), BondingCurveError::InsufficientFunds);
         require(eth_in <= max_eth_in, BondingCurveError::SlippageLimitExceeded);
-        let to_address = msg_sender().unwrap();
         let eth_left = msg_amount() - eth_in;
         if  eth_left > 0 {
-            transfer(to_address, AssetId::from(BASE_ASSET_ID), eth_left); // return if remaining
+            transfer(recepient, AssetId::from(BASE_ASSET_ID), eth_left); // return if remaining
         }
         // mint and increase total supply
-        mint_to(to_address, DEFAULT_SUB_ID, amount * 10.pow(DECIMALS.as_u32()));  // include decimals
+        mint_to(recepient, DEFAULT_SUB_ID, amount * 10.pow(DECIMALS.as_u32()));  // include decimals
         storage.total_supply.write(total_supply + amount);
-        log(BuyTokenEvent {
-            token_amount: amount,
-            eth_in: eth_in,
-        });
         eth_in
     }
 
     #[storage(read, write), payable]
-    fn sell_token(amount: u64, min_eth_out: u64) -> u64 {
+    fn sell_token(recepient: Identity, amount: u64, min_eth_out: u64) -> u64 {
         require(storage.initialized.read(), BondingCurveError::UninitializedPool);
         require(msg_asset_id() == AssetId::default(), BondingCurveError::WrongAsset);
         require(amount * 10.pow(DECIMALS.as_u32()) == msg_amount(), BondingCurveError::InvalidFundsAmount);  // include decimals
         let total_supply = storage.total_supply.read();
         let eth_out = eth_out_by_token_in(total_supply, amount);
         require(eth_out >= min_eth_out, BondingCurveError::SlippageLimitExceeded);
+        transfer(recepient, AssetId::from(BASE_ASSET_ID), eth_out);
         // burn and reduce total supply
         burn(DEFAULT_SUB_ID, amount * 10.pow(DECIMALS.as_u32()));  // include decimals
         storage.total_supply.write(total_supply - amount);
-        log(SellTokenEvent {
-            token_amount: amount,
-            eth_out: eth_out,
-        });
         eth_out
     }
 

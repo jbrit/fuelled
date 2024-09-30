@@ -20,6 +20,7 @@ MemeFactory.TokenSold.handler(async ({ event, context }) => {
   context.Trade.set({
     id: `${event.chainId}_${event.block.height}_${event.logIndex}`,
     tradeType: "SELL",
+    token: event.params.asset_id.bits,
     tokenAmount: event.params.amount,
     ethAmount: event.params.eth_out,
     trader: event.params.trader.payload.bits,
@@ -33,6 +34,7 @@ MemeFactory.TokenBought.handler(async ({ event, context }) => {
   context.Trade.set({
     id: `${event.chainId}_${event.block.height}_${event.logIndex}`,
     tradeType: "BUY",
+    token: event.params.asset_id.bits,
     tokenAmount: event.params.amount,
     ethAmount: event.params.eth_in,
     trader: event.params.trader.payload.bits,
