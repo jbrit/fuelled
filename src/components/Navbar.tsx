@@ -42,7 +42,7 @@ export const Navbar: FC = () => {
 
       const tx = await faucetWallet?.transfer(
         wallet.address,
-        bn.parseUnits("5"),
+        bn.parseUnits("5")
       );
       await tx?.waitForResult();
 
@@ -55,12 +55,13 @@ export const Navbar: FC = () => {
     if (CURRENT_ENVIRONMENT === "testnet") {
       return window.open(
         `${TESTNET_FAUCET_LINK}?address=${wallet.address.toAddress()}`,
-        "_blank",
+        "_blank"
       );
     }
   };
 
-  const showTopUpButton = isBrowserWalletConnected && walletBalance?.lt(bn.parseUnits("5"));
+  const showTopUpButton =
+    isBrowserWalletConnected && walletBalance?.lt(bn.parseUnits("5"));
 
   const showAddNetworkButton =
     browserWallet &&
@@ -69,7 +70,7 @@ export const Navbar: FC = () => {
 
   const tryToAddNetwork = () => {
     return alert(
-      `Please add the network ${NODE_URL} to your Fuel wallet, or swtich to it if you have it already, and refresh the page.`,
+      `Please add the network ${NODE_URL} to your Fuel wallet, or swtich to it if you have it already, and refresh the page.`
     );
   };
 
@@ -77,45 +78,56 @@ export const Navbar: FC = () => {
     <>
       {/* Larger screens */}
       <nav className="hidden md:flex justify-between items-center p-4 bg-black text-white gap-6">
-        <Link href="/"><Logo /></Link>
+        <Link href="/">
+          <Logo />
+        </Link>
 
-        <Link href="/launch">launch</Link>
-        <Link href="/faucet">faucet</Link>
+        <div className="flex justify-between items-center gap-6">
+          <Link href="/launch">launch</Link>
+          <Link href="/faucet">faucet</Link>
 
-        {isBrowserWalletConnected && (
-          <Button onClick={disconnect}>Disconnect Wallet</Button>
-        )}
-        {!isBrowserWalletConnected && (
-          <Button onClick={connect}>Connect Wallet</Button>
-        )}
+          {isBrowserWalletConnected && (
+            <Button onClick={disconnect}>Disconnect Wallet</Button>
+          )}
+          {!isBrowserWalletConnected && (
+            <Button onClick={connect}>Connect Wallet</Button>
+          )}
 
-        {showAddNetworkButton && (
-          <Button onClick={tryToAddNetwork} className="bg-red-500">
-            Wrong Network
-          </Button>
-        )}
-        
-        <div className="ml-auto">
-          {isBrowserWalletConnected && <WalletDisplay />}
+          {showAddNetworkButton && (
+            <Button onClick={tryToAddNetwork} className="bg-red-500">
+              Wrong Network
+            </Button>
+          )}
+
+          <div className="ml-auto">
+            {isBrowserWalletConnected && <WalletDisplay />}
+          </div>
+
+          {showTopUpButton && (
+            <Button onClick={() => topUpWallet()}>Top-up Wallet</Button>
+          )}
         </div>
-
-        {showTopUpButton && (
-          <Button onClick={() => topUpWallet()}>Top-up Wallet</Button>
-        )}
       </nav>
 
       {/* Mobile. Should be a hamburger menu */}
       <nav className="flex flex-col md:hidden p-4 bg-black text-white items-center gap-4">
-        <img
-          src={isMobileMenuOpen ? "/close.svg" : "/hamburger.svg"}
-          alt="menu"
-          className="w-8 h-8 ml-auto cursor-pointer"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        />
+        <div className="w-full flex justify-between items-center gap-2">
+          <Link href="/">
+            <Logo />
+          </Link>
+          <img
+            src={isMobileMenuOpen ? "/close.svg" : "/hamburger.svg"}
+            alt="menu"
+            className="w-8 h-8 ml-auto cursor-pointer"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          />
+        </div>
 
         {isMobileMenuOpen && (
           <>
-            <Link href="/"><Logo /></Link>
+            {/* <Link href="/">
+              <Logo />
+            </Link> */}
 
             <Link href="/launch">launch</Link>
             <Link href="/faucet">faucet</Link>
@@ -133,9 +145,11 @@ export const Navbar: FC = () => {
               </Button>
             )}
 
-            {isBrowserWalletConnected && (<div>
-              <WalletDisplay />
-            </div>)}
+            {isBrowserWalletConnected && (
+              <div>
+                <WalletDisplay />
+              </div>
+            )}
 
             {showTopUpButton && (
               <Button onClick={() => topUpWallet()}>Top-up Wallet</Button>
