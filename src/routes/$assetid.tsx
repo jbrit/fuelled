@@ -99,13 +99,45 @@ export const Route = createFileRoute("/$assetid")({
                   <CandlestickChart />
                 </div>
               </div>
-              <div className="w-full lg:w-1/3">
+              <div className="w-full lg:w-1/3 flex flex-col gap-4">
                 <TradeTab
                   symbol={poolInfo.symbol}
                   contract={contract}
                   asset={assetid}
                   poolImg={poolInfo.image}
                 />
+                <div className="flex flex-wrap gap-3 justify-center">
+                  {poolInfo.twitter && (
+                    <a
+                      href={poolInfo.twitter}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-fuel-green hover:underline transition-all"
+                    >
+                      [Twitter]
+                    </a>
+                  )}
+                  {poolInfo.website && (
+                    <a
+                      href={poolInfo.website}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-fuel-green hover:underline transition-all"
+                    >
+                      [Website]
+                    </a>
+                  )}
+                  {poolInfo.telegram && (
+                    <a
+                      href={poolInfo.telegram}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-fuel-green hover:underline transition-all"
+                    >
+                      [Telegram]
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
             <h2 className="border-b-2 border-b-fuel-green text-white text-lg font-bold p-1 w-fit mb-6">
