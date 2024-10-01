@@ -5,8 +5,18 @@ export const Input: React.FC<{
   type?: string;
   className?: string;
   id?: string;
-  readOnly?: boolean
-}> = ({ value, onChange, placeholder, type, className, id, readOnly }) => {
+  readOnly?: boolean;
+  accept?: string;
+}> = ({
+  value,
+  onChange,
+  placeholder,
+  type,
+  className,
+  id,
+  readOnly,
+  accept,
+}) => {
   return (
     <input
       value={value}
@@ -16,6 +26,7 @@ export const Input: React.FC<{
       className={`border-2 border-gray-700 placeholder:text-gray-600 text-gray-400 rounded-md px-4 py-2 bg-transparent outline-none ${className}`}
       id={id}
       readOnly={readOnly}
+      accept={accept}
     />
   );
 };
