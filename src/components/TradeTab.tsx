@@ -7,6 +7,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
@@ -22,6 +31,8 @@ type Props = {
 };
 
 export function TradeTab({ symbol, contract, asset }: Props) {
+  const [showSlippage, setShowSlippage] = useState(false);
+  const [slippage, setSlippage] = useState(0);
   const [buyAmount, setBuyAmount] = useState(0);
   const [sellAmount, setSellAmount] = useState(0);
   const [ethIn, setEthIn] = useState(0);
@@ -31,103 +42,186 @@ export function TradeTab({ symbol, contract, asset }: Props) {
     wallet && new MemeFactory(TESTNET_MEME_FACTORY_CONTRACT_ID, wallet);
   const curveContract = wallet && new BondingCurve(contract.bits, wallet);
   return (
-    <Tabs defaultValue="buy" className="w-full max-w-[400px]">
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="buy">Buy</TabsTrigger>
-        <TabsTrigger value="sell">Sell</TabsTrigger>
-      </TabsList>
-      <TabsContent value="buy">
-        <Card>
-          <CardHeader>
-            <CardTitle>Buy ${symbol}</CardTitle>
-            <CardDescription>...</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="space-y-1">
-              <Input
-                id="buyAmount"
-                value={buyAmount}
-                onChange={(e) => setBuyAmount(parseInt(e.target.value))}
-                type="number"
-              />
-            </div>
-          </CardContent>
-          <CardFooter>
+    <>
+      <Dialog open={showSlippage} onOpenChange={setShowSlippage}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="text-gray-300">
+              Set max. slippage (%)
+            </DialogTitle>
+            <DialogDescription className="text-gray-400">
+              This is the maximum amount of slippage you are willing to accept
+              when placing trades
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <Input
+              id="name"
+              value={slippage}
+              onChange={(e) => setSlippage(parseInt(e.target.value))}
+              type="number"
+              className="text-white"
+            />
+          </div>
+          <DialogFooter>
             <Button
-              onClick={async () => {
-                if (!wallet || !memeFactorycontract)
-                  return toast.error("Wallet not connected");
-                const { value: validContract } =
-                  await memeFactorycontract.functions.is_valid(contract).get();
-                console.log({ validContract, contract });
-                const { waitForResult: buyWait } =
-                  await memeFactorycontract.functions
-                    .buy_token(contract, buyAmount, 1e9)
-                    .callParams({
-                      forward: {
-                        assetId: BASE_ASSET_ID,
-                        amount: 1e9,
-                      },
-                    })
-                    .addContracts([curveContract!])
-                    .call();
-                const { value } = await buyWait();
-                toast.success(
-                  `Bought ${buyAmount} ${symbol} for ${value.toNumber() / 1e9} ETH`
-                );
+              onClick={() => {
+                setSlippage(0);
+                setShowSlippage(false);
               }}
-              className="bg-fuel-green w-full"
+              type="submit"
             >
-              Buy Token
+              [close]
             </Button>
-          </CardFooter>
-        </Card>
-      </TabsContent>
-      <TabsContent value="sell">
-        <Card>
-          <CardHeader>
-            <CardTitle>Sell ${symbol}</CardTitle>
-            <CardDescription>...</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="space-y-1">
-              <Input
-                id="sellAmount"
-                value={sellAmount}
-                onChange={(e) => setSellAmount(parseInt(e.target.value))}
-                type="number"
-              />
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button
-              onClick={async () => {
-                if (!wallet || !memeFactorycontract)
-                  return toast.error("Wallet not connected");
-                const { value: validContract } =
-                  await memeFactorycontract.functions.is_valid(contract).get();
-                console.log({ validContract, contract, sellAmount });
-                const { waitForResult: sellWait } =
-                  await memeFactorycontract.functions
-                    .sell_token(contract, sellAmount, 0)
-                    .callParams({
-                      forward: {
-                        assetId: asset,
-                        amount: `${sellAmount}000000000`,
-                      },
-                    })
-                    .addContracts([curveContract!])
-                    .call();
-                const { value } = await sellWait();
-                toast.success(`Sold ${symbol} for ${value} ETH`);
-              }}
-              className="bg-red-500 w-full"
-            >
-              Sell Token
-            </Button>
-          </CardFooter>
-        </Card>
-      </TabsContent>
-    </Tabs>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Tabs defaultValue="buy" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="buy">Buy</TabsTrigger>
+          <TabsTrigger value="sell">Sell</TabsTrigger>
+        </TabsList>
+        <TabsContent value="buy">
+          <Card>
+            <CardHeader>
+              <CardTitle>Buy ${symbol}</CardTitle>
+              {/* <CardDescription>...</CardDescription> */}
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <div className="space-y-4">
+                <button
+                  onClick={() => {
+                    setShowSlippage(true);
+                  }}
+                  className="bg-fuel-green px-2 py-1 text-xs font-medium bg-opacity-50 hover:bg-opacity-100 transition-all text-white rounded-sm"
+                >
+                  Set max slippage
+                </button>
+                <Input
+                  id="buyAmount"
+                  value={buyAmount}
+                  onChange={(e) => setBuyAmount(parseInt(e.target.value))}
+                  type="number"
+                />
+                <div className="flex items-center gap-2">
+                  {[0, 1, 5, 10].map((n) => (
+                    <button
+                      key={n}
+                      onClick={() => {
+                        setBuyAmount(n);
+                      }}
+                      className="bg-fuel-green px-2 py-1 text-xs font-medium bg-opacity-50 hover:bg-opacity-100 transition-all text-white rounded-sm"
+                    >
+                      {n ? `${n} ETH` : "reset"}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-base text-gray-500">28331683 ETH</p>
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button
+                onClick={async () => {
+                  if (!wallet || !memeFactorycontract)
+                    return toast.error("Wallet not connected");
+                  const { value: validContract } =
+                    await memeFactorycontract.functions
+                      .is_valid(contract)
+                      .get();
+                  console.log({ validContract, contract });
+                  const { waitForResult: buyWait } =
+                    await memeFactorycontract.functions
+                      .buy_token(contract, buyAmount, 1e9)
+                      .callParams({
+                        forward: {
+                          assetId: BASE_ASSET_ID,
+                          amount: 1e9,
+                        },
+                      })
+                      .addContracts([curveContract!])
+                      .call();
+                  const { value } = await buyWait();
+                  toast.success(
+                    `Bought ${buyAmount} ${symbol} for ${value.toNumber() / 1e9} ETH`
+                  );
+                }}
+                className="bg-fuel-green w-full"
+              >
+                Buy Token
+              </Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+        <TabsContent value="sell">
+          <Card>
+            <CardHeader>
+              <CardTitle>Sell ${symbol}</CardTitle>
+              <CardDescription>...</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <div className="space-y-4">
+                <button
+                  onClick={() => {
+                    setShowSlippage(true);
+                  }}
+                  className="bg-red-600 px-2 py-1 text-xs font-medium bg-opacity-70 hover:bg-opacity-100 transition-all text-white rounded-sm"
+                >
+                  Set max slippage
+                </button>
+                <Input
+                  id="sellAmount"
+                  value={sellAmount}
+                  onChange={(e) => setSellAmount(parseInt(e.target.value))}
+                  type="number"
+                />
+                <div className="flex items-center gap-2">
+                  {[0, 25, 50, 75, 100].map((n) => (
+                    <button
+                      key={n}
+                      onClick={() => {
+                        setSellAmount((prev) => (n / 100) * prev);
+                      }}
+                      className="bg-red-600 px-2 py-1 text-xs font-medium bg-opacity-70 hover:bg-opacity-100 transition-all text-white rounded-sm"
+                    >
+                      {n ? `${n}%` : "reset"}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-base text-gray-500">28331683 ETH</p>
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button
+                onClick={async () => {
+                  if (!wallet || !memeFactorycontract)
+                    return toast.error("Wallet not connected");
+                  const { value: validContract } =
+                    await memeFactorycontract.functions
+                      .is_valid(contract)
+                      .get();
+                  console.log({ validContract, contract, sellAmount });
+                  const { waitForResult: sellWait } =
+                    await memeFactorycontract.functions
+                      .sell_token(contract, sellAmount, 0)
+                      .callParams({
+                        forward: {
+                          assetId: asset,
+                          amount: `${sellAmount}000000000`,
+                        },
+                      })
+                      .addContracts([curveContract!])
+                      .call();
+                  const { value } = await sellWait();
+                  toast.success(`Sold ${symbol} for ${value} ETH`);
+                }}
+                className="bg-red-500 w-full"
+              >
+                Sell Token
+              </Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </>
   );
 }

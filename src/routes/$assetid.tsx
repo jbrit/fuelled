@@ -45,26 +45,31 @@ export const Route = createFileRoute("/$assetid")({
                 {moment(poolInfo.createdAt * 1000).fromNow()}
               </span>
             </div>
-            <div className="mb-4">
-              <TradeTab
-                symbol={poolInfo.symbol}
-                contract={contract}
-                asset={assetid}
-              />
+            <div className="mb-4 w-full flex flex-col lg:flex-row gap-2">
+              <div className="w-full lg:w-2/3"></div>
+              <div className="w-full lg:w-1/3">
+                <TradeTab
+                  symbol={poolInfo.symbol}
+                  contract={contract}
+                  asset={assetid}
+                />
+              </div>
             </div>
             <TradeTable
               tokenName={poolInfo.symbol}
-              trades={tradesData.Trade.filter((t) => t.token === assetid).map((trade) => ({
-                id: trade.id,
-                trador: trade.trader,
-                type: trade.tradeType,
-                ethAmount: "" + (trade.ethAmount / 1e9).toFixed(3),
-                tokenAmount: parseInt(trade.tokenAmount)
-                  .toString()
-                  .replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-                createdAt: trade.createdAt,
-                txId: trade.txId,
-              }))}
+              trades={tradesData.Trade.filter((t) => t.token === assetid).map(
+                (trade) => ({
+                  id: trade.id,
+                  trador: trade.trader,
+                  type: trade.tradeType,
+                  ethAmount: "" + (trade.ethAmount / 1e9).toFixed(9),
+                  tokenAmount: parseInt(trade.tokenAmount)
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+                  createdAt: trade.createdAt,
+                  txId: trade.txId,
+                })
+              )}
             />
           </>
         )}
