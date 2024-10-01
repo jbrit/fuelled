@@ -61,7 +61,7 @@ export const Navbar: FC = () => {
   };
 
   const showTopUpButton =
-    isBrowserWalletConnected && walletBalance?.lt(bn.parseUnits("5"));
+    false && isBrowserWalletConnected && walletBalance?.lt(bn.parseUnits("5"));
 
   const showAddNetworkButton =
     browserWallet &&

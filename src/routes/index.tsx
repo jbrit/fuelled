@@ -44,9 +44,7 @@ function Index() {
                 <img
                   className="w-44 h-auto"
                   alt=""
-                  src="https://pump.mypinata.cloud/ipfs/QmaPyVx8Spow9sk3jQBy1ekVaBc9UAh9T6ngXfXRqiB6G7?img-width=128&img-dpr=2&img-onerror=redirect"
-                  //unable to display image address placeholder
-                  // src="data:image/svg+xml;charset=UTF-8,%0A%20%20%20%20%3Csvg%20width%3D%22128%22%20height%3D%22128%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22transparent%22%20stroke%3D%22%23666%22%20%2F%3E%0A%20%20%20%20%20%20%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20font-family%3D%22-apple-system%2C%20Inter%2C%20sans-serif%22%20text-anchor%3D%22middle%22%20fill%3D%22%23666%22%20font-size%3D%2265%25%22%20font-size-adjust%3D%220.58%22%20%3E%0A%20%20%20%20%20%20%20%20Unable%20to%20display%20image%0A%20%20%20%20%20%20%3C%2Ftext%3E%0A%0A%20%20%20%20%3C%2Fsvg%3E%0A%0A"
+                  src={pool.image}
                 />
               </div>
               <div>
@@ -61,7 +59,7 @@ function Index() {
                   {moment(pool.createdAt * 1000).fromNow()}]
                 </CardContent>
                 <CardFooter className="text-gray-400 text-sm">
-                  A Deal of a Lifetime
+                  {pool.description}
                 </CardFooter>
               </div>
             </Card>

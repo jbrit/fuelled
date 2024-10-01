@@ -57,10 +57,15 @@ export type Pool = {
   createdAt: Scalars['Int']['output'];
   createdBy: Scalars['String']['output'];
   db_write_timestamp?: Maybe<Scalars['timestamp']['output']>;
+  description: Scalars['String']['output'];
   id: Scalars['String']['output'];
+  image: Scalars['String']['output'];
   name: Scalars['String']['output'];
   symbol: Scalars['String']['output'];
+  telegram: Scalars['String']['output'];
+  twitter: Scalars['String']['output'];
   txId: Scalars['String']['output'];
+  website: Scalars['String']['output'];
 };
 
 /** Boolean expression to filter rows from the table "Pool". All fields are combined with a logical 'AND'. */
@@ -73,10 +78,15 @@ export type Pool_Bool_Exp = {
   createdAt?: InputMaybe<Int_Comparison_Exp>;
   createdBy?: InputMaybe<String_Comparison_Exp>;
   db_write_timestamp?: InputMaybe<Timestamp_Comparison_Exp>;
+  description?: InputMaybe<String_Comparison_Exp>;
   id?: InputMaybe<String_Comparison_Exp>;
+  image?: InputMaybe<String_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
   symbol?: InputMaybe<String_Comparison_Exp>;
+  telegram?: InputMaybe<String_Comparison_Exp>;
+  twitter?: InputMaybe<String_Comparison_Exp>;
   txId?: InputMaybe<String_Comparison_Exp>;
+  website?: InputMaybe<String_Comparison_Exp>;
 };
 
 /** Ordering options when selecting data from "Pool". */
@@ -86,10 +96,15 @@ export type Pool_Order_By = {
   createdAt?: InputMaybe<Order_By>;
   createdBy?: InputMaybe<Order_By>;
   db_write_timestamp?: InputMaybe<Order_By>;
+  description?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  image?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   symbol?: InputMaybe<Order_By>;
+  telegram?: InputMaybe<Order_By>;
+  twitter?: InputMaybe<Order_By>;
   txId?: InputMaybe<Order_By>;
+  website?: InputMaybe<Order_By>;
 };
 
 /** select columns of table "Pool" */
@@ -105,13 +120,23 @@ export enum Pool_Select_Column {
   /** column name */
   DbWriteTimestamp = 'db_write_timestamp',
   /** column name */
+  Description = 'description',
+  /** column name */
   Id = 'id',
+  /** column name */
+  Image = 'image',
   /** column name */
   Name = 'name',
   /** column name */
   Symbol = 'symbol',
   /** column name */
-  TxId = 'txId'
+  Telegram = 'telegram',
+  /** column name */
+  Twitter = 'twitter',
+  /** column name */
+  TxId = 'txId',
+  /** column name */
+  Website = 'website'
 }
 
 /** Streaming cursor of the table "Pool" */
@@ -129,10 +154,15 @@ export type Pool_Stream_Cursor_Value_Input = {
   createdAt?: InputMaybe<Scalars['Int']['input']>;
   createdBy?: InputMaybe<Scalars['String']['input']>;
   db_write_timestamp?: InputMaybe<Scalars['timestamp']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['String']['input']>;
+  image?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   symbol?: InputMaybe<Scalars['String']['input']>;
+  telegram?: InputMaybe<Scalars['String']['input']>;
+  twitter?: InputMaybe<Scalars['String']['input']>;
   txId?: InputMaybe<Scalars['String']['input']>;
+  website?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'. */
@@ -1730,7 +1760,7 @@ export type Tradetype_Comparison_Exp = {
 export type AllPoolsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AllPoolsQuery = { __typename?: 'query_root', Pool: Array<{ __typename?: 'Pool', id: string, name: string, symbol: string, txId: string, asset: string, contract: string, createdAt: number, createdBy: string, db_write_timestamp?: any | null }> };
+export type AllPoolsQuery = { __typename?: 'query_root', Pool: Array<{ __typename?: 'Pool', id: string, name: string, symbol: string, description: string, image: string, twitter: string, telegram: string, website: string, txId: string, asset: string, contract: string, createdAt: number, createdBy: string, db_write_timestamp?: any | null }> };
 
 export type AllTradesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1738,5 +1768,5 @@ export type AllTradesQueryVariables = Exact<{ [key: string]: never; }>;
 export type AllTradesQuery = { __typename?: 'query_root', Trade: Array<{ __typename?: 'Trade', createdAt: number, db_write_timestamp?: any | null, ethAmount: any, id: string, token: string, tokenAmount: any, tradeType: any, trader: string, txId: string }> };
 
 
-export const AllPoolsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AllPools"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Pool"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"txId"}},{"kind":"Field","name":{"kind":"Name","value":"asset"}},{"kind":"Field","name":{"kind":"Name","value":"contract"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"db_write_timestamp"}}]}}]}}]} as unknown as DocumentNode<AllPoolsQuery, AllPoolsQueryVariables>;
+export const AllPoolsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AllPools"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Pool"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"twitter"}},{"kind":"Field","name":{"kind":"Name","value":"telegram"}},{"kind":"Field","name":{"kind":"Name","value":"website"}},{"kind":"Field","name":{"kind":"Name","value":"txId"}},{"kind":"Field","name":{"kind":"Name","value":"asset"}},{"kind":"Field","name":{"kind":"Name","value":"contract"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"db_write_timestamp"}}]}}]}}]} as unknown as DocumentNode<AllPoolsQuery, AllPoolsQueryVariables>;
 export const AllTradesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AllTrades"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Trade"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"db_write_timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"ethAmount"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"tokenAmount"}},{"kind":"Field","name":{"kind":"Name","value":"tradeType"}},{"kind":"Field","name":{"kind":"Name","value":"trader"}},{"kind":"Field","name":{"kind":"Name","value":"txId"}}]}}]}}]} as unknown as DocumentNode<AllTradesQuery, AllTradesQueryVariables>;

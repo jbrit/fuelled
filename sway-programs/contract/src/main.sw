@@ -33,9 +33,17 @@ configurable {
 
 storage {
     initialized: bool = false,
+
+    total_supply: u64 = 0,
+
     name: StorageString = StorageString {},
     symbol: StorageString = StorageString {},
-    total_supply: u64 = 0,
+    description: StorageString = StorageString {},
+    image: StorageString = StorageString {},
+
+    twitter: StorageString = StorageString {},
+    telegram: StorageString = StorageString {},
+    website: StorageString = StorageString {},
 }
 
 
@@ -84,15 +92,23 @@ impl SRC20 for Contract {
 
 impl BondingCurveAbi for Contract {
     #[storage(read, write)]
-    fn initialize(name: str, symbol: str) -> bool {
+    fn initialize(name: String, symbol: String, description: String, image: String, twitter: String, telegram: String, website: String) -> bool {
         require(!storage.initialized.read(), BondingCurveError::InitializedPool);
         storage.initialized.write(true);
-        storage.name.write_slice(String::from_ascii_str(name));
-        storage.symbol.write_slice(String::from_ascii_str(symbol));
+
+        storage.name.write_slice(name);
+        storage.symbol.write_slice(symbol);
+        storage.description.write_slice(description);
+        storage.image.write_slice(image);
+
+        storage.twitter.write_slice(twitter);
+        storage.telegram.write_slice(telegram);
+        storage.website.write_slice(website);
+
         let asset = AssetId::default();
         let sender = msg_sender().unwrap();
-        SetNameEvent::new(asset, Some(String::from_ascii_str(name)), sender).log();
-        SetSymbolEvent::new(asset, Some(String::from_ascii_str(symbol)), sender).log();
+        SetNameEvent::new(asset, Some(name), sender).log();
+        SetSymbolEvent::new(asset, Some(symbol), sender).log();
         SetDecimalsEvent::new(asset, DECIMALS, sender).log();
         TotalSupplyEvent::new(asset, 0, sender).log();
         true

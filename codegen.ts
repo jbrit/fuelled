@@ -1,16 +1,21 @@
-import { CodegenConfig } from '@graphql-codegen/cli';
+import { CodegenConfig } from "@graphql-codegen/cli";
+import dotenv from 'dotenv';
+
+dotenv.config({
+  path: ['.env.local', '.env'],
+});
 
 const config: CodegenConfig = {
-  schema: 'http://localhost:8080/v1/graphql',
-  documents: ['src/**/*.{ts,tsx}'],
+  schema: process.env.VITE_INDEXER_GRAPHQL_URL,
+  documents: ["src/**/*.{ts,tsx}"],
   generates: {
-    './src/__generated__/': {
-      preset: 'client',
+    "./src/__generated__/": {
+      preset: "client",
       plugins: [],
       presetConfig: {
-        gqlTagName: 'gql',
-      }
-    }
+        gqlTagName: "gql",
+      },
+    },
   },
   ignoreNoDocuments: true,
 };

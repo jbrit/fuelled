@@ -1,6 +1,5 @@
 import { createConfig } from 'fuels';
 import dotenv from 'dotenv';
-import { NODE_URL } from './src/lib';
 
 dotenv.config({
   path: ['.env.local', '.env'],

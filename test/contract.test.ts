@@ -65,11 +65,8 @@ describe('Contract', () => {
       const {value: newbcr} = await setBCRContractWait();
       console.log("newbcr", newbcr);
     }
-    // await contract.functions.initialize("MyAsset", "TOKEN").call()
-    const rc = await memefactory.functions.register_contract(contractIdInput, "MyAsset", "TOKEN").addContracts([contract]).fundWithRequiredCoins();
-    console.log("maxFee", rc.maxFee.toBuffer("le", 8).readBigUInt64LE())
-    console.log("gasLimit", rc.gasLimit.toBuffer("le", 8).readBigUInt64LE())
-    const {waitForResult: registerContractWait} = await memefactory.functions.register_contract(contractIdInput, "MyAsset", "TOKEN").addContracts([contract]).call();
+
+    const {waitForResult: registerContractWait} = await memefactory.functions.register_contract(contractIdInput, "MyAsset", "TOKEN", "desc", "img", "twt", "tel", "web").addContracts([contract]).call();
     const {value: bytecoderoot} = await registerContractWait();
     console.log("bytecoderoot", bytecoderoot.Ok);
 

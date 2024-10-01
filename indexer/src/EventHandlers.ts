@@ -5,8 +5,20 @@ import {
 MemeFactory.PoolInitialized.handler(async ({ event, context }) => {
   context.Pool.set({
     id: `${event.chainId}_${event.block.height}_${event.logIndex}`,
+    //@ts-ignore
     name: event.params.name,
+    //@ts-ignore
     symbol: event.params.symbol,
+    //@ts-ignore
+    description: event.params.description,
+    //@ts-ignore
+    image: event.params.image,
+    //@ts-ignore
+    twitter: event.params.twitter,
+    //@ts-ignore
+    telegram: event.params.telegram,
+    //@ts-ignore
+    website: event.params.website,
     asset: event.params.asset_id.bits,
     contract: event.params.contract_id.bits,
     createdBy: event.params.dev.payload.bits,

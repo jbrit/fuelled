@@ -1,8 +1,9 @@
 library;
+use std::string::String;
 
 abi BondingCurveAbi {
     #[storage(read, write)]
-    fn initialize(name: str, symbol: str) -> bool;
+    fn initialize(name: String, symbol: String, description: String, image: String, twitter: String, telegram: String, website: String) -> bool;
 
     #[storage(read)]
     fn eth_in_by_token_out(token_out: u64) -> u64;
