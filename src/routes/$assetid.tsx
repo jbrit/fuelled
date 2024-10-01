@@ -1,6 +1,10 @@
 import { createFileRoute, useLoaderData } from "@tanstack/react-router";
 import { BondingCurve, MemeFactory } from "../sway-api";
-import { BONDING_CURVE_TOTAL_SUPPLY, NODE_URL, TESTNET_MEME_FACTORY_CONTRACT_ID } from "../lib";
+import {
+  BONDING_CURVE_TOTAL_SUPPLY,
+  NODE_URL,
+  TESTNET_MEME_FACTORY_CONTRACT_ID,
+} from "../lib";
 import { Provider, bn } from "fuels";
 import { useQuery as useGraphQuery } from "@apollo/client";
 import { ALL_POOLS_QUERY, ALL_TRADES_QUERY } from "../queries";
@@ -13,6 +17,7 @@ import toast from "react-hot-toast";
 import { useRef } from "react";
 import { useActiveWallet } from "../hooks/useActiveWallet";
 import { useQuery } from "@tanstack/react-query";
+import { Progress } from "@/components/ui/progress";
 
 const memeFactoryContractId = TESTNET_MEME_FACTORY_CONTRACT_ID;
 
@@ -39,20 +44,40 @@ export const Route = createFileRoute("/$assetid")({
     );
     const poolInfo = filteredPoolInfos?.length ? filteredPoolInfos[0] : null;
 
-    const {data: totalSupply} = useQuery({
+    const { data: totalSupply } = useQuery({
       queryKey: ["totalSupply", assetid],
-      queryFn: async () => ((await curveContract!.functions.total_supply({bits:assetid}).get()).value ??  bn(0)).div(bn(1e9)).toNumber(),
+      queryFn: async () =>
+        (
+          (await curveContract!.functions.total_supply({ bits: assetid }).get())
+            .value ?? bn(0)
+        )
+          .div(bn(1e9))
+          .toNumber(),
       refetchInterval: 1000,
-      enabled: !!curveContract
+      enabled: !!curveContract,
     });
-    const tokensAvailable = totalSupply && BONDING_CURVE_TOTAL_SUPPLY - totalSupply;
-    const ethInCurve = tradesData?.Trade.reduce((acc, trade) => trade.tradeType === "BUY" ? acc.add(bn(trade.ethAmount)) : acc.add(bn(trade.ethAmount)), bn(0)).toNumber();
-    const curvePercent = totalSupply && Math.floor(100 * totalSupply / BONDING_CURVE_TOTAL_SUPPLY);
-    console.log((ethInCurve && ethInCurve / 1e9), tokensAvailable, curvePercent) // NOTE(@thatdeji): comma separate tokensAvailable
+    const tokensAvailable =
+      totalSupply && BONDING_CURVE_TOTAL_SUPPLY - totalSupply;
+    const ethInCurve = tradesData?.Trade.reduce(
+      (acc, trade) =>
+        trade.tradeType === "BUY"
+          ? acc.add(bn(trade.ethAmount))
+          : acc.add(bn(trade.ethAmount)),
+      bn(0)
+    ).toNumber();
+    const curvePercent =
+      totalSupply &&
+      Math.floor((100 * totalSupply) / BONDING_CURVE_TOTAL_SUPPLY);
+    console.log(ethInCurve && ethInCurve / 1e9, tokensAvailable, curvePercent); // NOTE(@thatdeji): comma separate tokensAvailable
     return (
       <div>
         {!!poolInfo && !!tradesData && (
           <>
+            {curvePercent === 100 ? (
+              <p className="px-4 py-2 bg-green-400 text-slate-900 rounded-sm mb-4 w-fit text-base font-medium">
+                Bonding curve filled, DEX launch pending
+              </p>
+            ) : null}
             <div className="mb-4 md:mb-8 lg:mb-10 w-full flex flex-col lg:flex-row flex-nowrap gap-5 md:gap-10 xl:gap-20">
               <div className="w-full lg:w-2/3">
                 <div className="flex flex-col gap-3">
@@ -107,7 +132,23 @@ export const Route = createFileRoute("/$assetid")({
                   contract={contract}
                   asset={assetid}
                   poolImg={poolInfo.image}
+                  isBondingCuveFull={curvePercent === 100}
                 />
+                <div className="flex flex-col gap-2">
+                  <p className="text-gray-500">
+                    bonding curve progress: {curvePercent}%
+                  </p>
+                  <Progress value={curvePercent} />
+                </div>
+                <p className="text-gray-500">
+                  when the bonding curve liquidity reaches 1 ETH, 300M $
+                  {poolInfo.symbol} will be deposited into the DEX
+                </p>
+                <p className="text-gray-500">
+                  there are {tokensAvailable?.toLocaleString()} tokens still
+                  available for sale in the bonding curve and there is{" "}
+                  {ethInCurve && ethInCurve / 1e9} ETH in the bonding curve.
+                </p>
                 <div className="flex flex-wrap gap-3 justify-center">
                   {poolInfo.twitter && (
                     <a

@@ -29,10 +29,17 @@ type Props = {
   contract: { bits: string };
   asset: string;
   poolImg: string;
+  isBondingCuveFull: boolean;
 };
 
-export function TradeTab({ symbol, contract, asset, poolImg }: Props) {
-  const [currency, setCurrency] = useState("ETH");
+export function TradeTab({
+  symbol,
+  contract,
+  asset,
+  poolImg,
+  isBondingCuveFull,
+}: Props) {
+  const [currency, setCurrency] = useState(symbol);
   const [showSlippage, setShowSlippage] = useState(false);
   const [slippage, setSlippage] = useState(0);
   const [buyAmount, setBuyAmount] = useState(0);
@@ -147,12 +154,14 @@ export function TradeTab({ symbol, contract, asset, poolImg }: Props) {
                     ))}
                   </div>
                 ) : null}
-                <p className="text-base text-gray-500">28331683 ETH</p>
+                <p className="text-base text-gray-500">...</p>
               </div>
             </CardContent>
             <CardFooter>
               <Button
                 onClick={async () => {
+                  if (isBondingCuveFull)
+                    return toast.error("Bonding curve is full");
                   if (!wallet || !memeFactorycontract)
                     return toast.error("Wallet not connected");
                   const { value: validContract } =
@@ -226,12 +235,14 @@ export function TradeTab({ symbol, contract, asset, poolImg }: Props) {
                     </button>
                   ))}
                 </div>
-                <p className="text-base text-gray-500">28331683 ETH</p>
+                <p className="text-base text-gray-500">...</p>
               </div>
             </CardContent>
             <CardFooter>
               <Button
                 onClick={async () => {
+                  if (isBondingCuveFull)
+                    return toast.error("Bonding curve is full");
                   if (!wallet || !memeFactorycontract)
                     return toast.error("Wallet not connected");
                   const { value: validContract } =
