@@ -39,9 +39,13 @@ function Index() {
             className="no-underline hover:no-underline"
             href={`/${pool.asset}`}
           >
-            <Card className="hover:no-underline flex items-center">
+            <Card className="hover:no-underline flex flex-col md:flex-row items-stretch md:items-center">
               <div className="py-2 px-4">
-                <img className="w-44 h-auto" alt="" src={pool.image ?? ""} />
+                <img
+                  className="w-full md:w-44 h-auto object-cover"
+                  alt=""
+                  src={pool.image ?? ""}
+                />
               </div>
               <div>
                 <CardHeader>

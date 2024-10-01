@@ -6,7 +6,13 @@ import { useFaucet } from "../hooks/useFaucet";
 import { bn } from "fuels";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { B256_ZERO, BASE_ASSET_CONTRACT_ID, CURRENT_ENVIRONMENT, Environments, TESTNET_FAUCET_LINK } from "../lib";
+import {
+  B256_ZERO,
+  BASE_ASSET_CONTRACT_ID,
+  CURRENT_ENVIRONMENT,
+  Environments,
+  TESTNET_FAUCET_LINK,
+} from "../lib";
 import { DummyAsset } from "../sway-api";
 
 export const Route = createLazyFileRoute("/faucet")({
@@ -42,12 +48,18 @@ function Index() {
     }
 
     const dummyAsset = new DummyAsset(BASE_ASSET_CONTRACT_ID, wallet);
-    await dummyAsset.functions.mint({Address: {bits: receiverAddress}}, B256_ZERO, parseInt(amountToSend)*1e9).call();
+    await dummyAsset.functions
+      .mint(
+        { Address: { bits: receiverAddress } },
+        B256_ZERO,
+        parseInt(amountToSend) * 1e9
+      )
+      .call();
 
     // Transfer the specified amount of ETH to the receiver address
     const tx = await faucetWallet!.transfer(
       receiverAddress,
-      bn.parseUnits(amountToSend.toString()),
+      bn.parseUnits(amountToSend.toString())
     );
     await tx.waitForResult();
 
@@ -59,7 +71,7 @@ function Index() {
   return (
     <>
       {CURRENT_ENVIRONMENT === Environments.TESTNET && (
-        <div className="flex flex-col gap-2 items-center">
+        <div className="flex flex-col gap-5 items-stretch max-w-[400px] mx-auto">
           <h3 className="text-2xl font-semibold">Local Faucet</h3>
 
           <div className="flex gap-4 items-center">
@@ -93,7 +105,7 @@ function Index() {
         </div>
       )}
 
-      {CURRENT_ENVIRONMENT === Environments.TESTNET+"k" && (
+      {CURRENT_ENVIRONMENT === Environments.TESTNET + "k" && (
         <>
           <iframe
             src={
