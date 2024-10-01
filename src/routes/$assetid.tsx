@@ -62,7 +62,7 @@ export const Route = createFileRoute("/$assetid")({
       (acc, trade) =>
         trade.tradeType === "BUY"
           ? acc.add(bn(trade.ethAmount))
-          : acc.add(bn(trade.ethAmount)),
+          : acc.sub(bn(trade.ethAmount)),
       bn(0)
     ).toNumber();
     const curvePercent =
