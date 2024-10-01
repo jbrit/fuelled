@@ -211,7 +211,7 @@ function Launch() {
         </label>
         <Textarea
           className="w-full"
-          value={symbol}
+          value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Description"
           id="token-description"
