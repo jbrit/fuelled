@@ -28,9 +28,10 @@ type Props = {
   symbol: string;
   contract: { bits: string };
   asset: string;
+  poolImg: string;
 };
 
-export function TradeTab({ symbol, contract, asset }: Props) {
+export function TradeTab({ symbol, contract, asset, poolImg }: Props) {
   const [currency, setCurrency] = useState("ETH");
   const [showSlippage, setShowSlippage] = useState(false);
   const [slippage, setSlippage] = useState(0);
@@ -118,19 +119,17 @@ export function TradeTab({ symbol, contract, asset }: Props) {
                     type="number"
                     className="appearance-none"
                   />
-                  <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-200 text-lg font-bold">
-                    {currency !== "ETH" ? (
-                      `$${symbol}`
-                    ) : (
-                      <div className="flex items-center gap-1">
-                        <span>ETH</span>
-                        <img
-                          src="https://png.pngtree.com/png-vector/20210522/ourmid/pngtree-vector-illustration-of-crytocurrency-ethereum-png-image_3314668.jpg"
-                          width={20}
-                          height={20}
-                        />
-                      </div>
-                    )}
+                  <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-200 text-lg font-bold flex items-center gap-3">
+                    {currency !== "ETH" ? `$${symbol}` : <span>ETH</span>}
+                    <img
+                      src={
+                        currency === "ETH"
+                          ? "https://png.pngtree.com/png-vector/20210522/ourmid/pngtree-vector-illustration-of-crytocurrency-ethereum-png-image_3314668.jpg"
+                          : poolImg
+                      }
+                      width={20}
+                      height={20}
+                    />
                   </span>
                 </div>
                 {currency === "ETH" ? (
@@ -209,8 +208,9 @@ export function TradeTab({ symbol, contract, asset }: Props) {
                     type="number"
                   />
 
-                  <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-200 text-lg font-bold">
+                  <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-200 text-lg font-bold flex gap-3 items-center">
                     ${symbol}
+                    <img src={poolImg} width={20} height={20} />
                   </span>
                 </div>
                 <div className="flex items-center gap-2">

@@ -104,6 +104,7 @@ export const Route = createFileRoute("/$assetid")({
                   symbol={poolInfo.symbol}
                   contract={contract}
                   asset={assetid}
+                  poolImg={poolInfo.image}
                 />
               </div>
             </div>

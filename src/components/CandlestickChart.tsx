@@ -21,9 +21,12 @@ const generateOHLCData = (
 ): OHLCData[] => {
   const data: OHLCData[] = [];
   let currentTime = startTime;
+  let prevClose: null | number = null;
 
   for (let i = 0; i < numberOfCandles; i++) {
-    const open = parseFloat((Math.random() * (10000 - 6500) + 6500).toFixed(2));
+    const open =
+      prevClose ||
+      parseFloat((Math.random() * (10000 - 6500) + 6500).toFixed(2));
     const close = parseFloat(
       (Math.random() * (10000 - 6500) + 6500).toFixed(2)
     );
@@ -37,6 +40,8 @@ const generateOHLCData = (
       close,
       parseFloat((Math.random() * (10000 - 6500) + 6500).toFixed(2))
     );
+
+    prevClose = close;
 
     data.push({
       x: new Date(currentTime),
