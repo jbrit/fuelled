@@ -156,7 +156,7 @@ export function TradeTab({ symbol, contract, asset }: Props) {
           <Card>
             <CardHeader>
               <CardTitle>Sell ${symbol}</CardTitle>
-              <CardDescription>...</CardDescription>
+              {/* <CardDescription>...</CardDescription> */}
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="space-y-4">
