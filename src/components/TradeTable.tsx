@@ -31,6 +31,23 @@ type Props = {
     txId: string;
   }[];
 };
+
+function formatNumber(number: number): string {
+  if (number >= 1000000000000) {
+    return (number / 1000000000000).toFixed(0) + "T";
+  } else if (number >= 1000000000) {
+    return (number / 1000000000).toFixed(0) + "B";
+  } else if (number >= 1000000) {
+    return (number / 1000000).toFixed(0) + "M";
+  } else if (number >= 1000) {
+    return (number / 1000).toFixed(0) + "K";
+  } else if (number >= 100) {
+    return "100";
+  } else {
+    return number.toString();
+  }
+}
+
 export function TradeTable({ trades, tokenName }: Props) {
   const traderTxn = (trader: string) => {
     const selectedTrade = trades.filter((trade) => trade.trador === trader);
@@ -40,7 +57,7 @@ export function TradeTable({ trades, tokenName }: Props) {
       0
     );
     const amountBoughtInToken = bought.reduce(
-      (acc, trade) => acc + parseFloat(trade.tokenAmount),
+      (acc, trade) => acc + parseFloat(trade.tokenAmount.replace(/,/g, "")),
       0
     );
     const sold = selectedTrade.filter((trade) => trade.type === "SELL");
@@ -49,16 +66,18 @@ export function TradeTable({ trades, tokenName }: Props) {
       0
     );
     const amountSoldInToken = sold.reduce(
-      (acc, trade) => acc + parseFloat(trade.tokenAmount),
+      (acc, trade) => acc + parseFloat(trade.tokenAmount.replace(/,/g, "")),
       0
     );
+    const pnlInETH = amountBoughtInETH - amountSoldInETH;
+    const pnlInToken = amountBoughtInToken - amountSoldInToken;
     const txn = {
-      amountBoughtInETH: `${amountBoughtInETH}ETH`,
-      amountBoughtInToken: `${amountBoughtInToken}${tokenName}`,
-      amountSoldInToken: `${amountSoldInToken}${tokenName}`,
-      amountSoldInETH: `${amountSoldInETH}ETH`,
-      pnlInETH: `${amountBoughtInETH - amountSoldInETH}ETH`,
-      pnlInToken: `${amountBoughtInToken - amountSoldInToken}${tokenName}`,
+      amountBoughtInETH: `${amountBoughtInETH?.toFixed(8)}ETH`,
+      amountBoughtInToken: `${tokenName} ${formatNumber(amountBoughtInToken)} `,
+      amountSoldInToken: `${tokenName} ${formatNumber(amountSoldInToken)} `,
+      amountSoldInETH: `${amountSoldInETH?.toFixed(8)}ETH`,
+      pnlInETH: `${pnlInETH?.toFixed(8)}ETH`,
+      pnlInToken: `${tokenName} ${formatNumber(pnlInToken)}`,
       lengthOfBought: bought.length,
       lengthOfSold: sold.length,
     };
@@ -98,11 +117,11 @@ export function TradeTable({ trades, tokenName }: Props) {
                       {getTruncatedAddress(trade.trador)}
                     </TooltipTrigger>
                     <TooltipContent
-                      className="bg-slate-950 text-white rounded-none p-2 w-fit"
+                      className="bg-slate-950 text-white rounded-none p-2 min-w-[300px]"
                       side="top"
                     >
-                      <div className="bg-black text-white p-4 rounded-lg w-80 shadow-lg">
-                        <div className="flex justify-between text-sm mb-2">
+                      <div className="bg-black text-white p-4 rounded-lg min-w-80 shadow-lg">
+                        <div className="flex gap-4 justify-between text-sm mb-2">
                           <div className="flex flex-col">
                             <span className="text-gray-400">(-) Bought:</span>
                             <span className="text-gray-400">(+)</span>
