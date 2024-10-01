@@ -6,6 +6,11 @@ import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   return {
+    build: {
+      rollupOptions: {
+        external: (source) => source.includes("rpc-websockets")
+      }
+    },
     resolve: {
       alias: {
         "@/": "/",

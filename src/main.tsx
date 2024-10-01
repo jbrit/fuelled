@@ -6,6 +6,7 @@ import "./index.css";
 
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
+import { INDEXER_GRAPHQL_URL } from "./lib";
 
 // Create a new router instance
 const router = createRouter({ routeTree });
@@ -18,7 +19,7 @@ declare module "@tanstack/react-router" {
 }
 
 const client = new ApolloClient({
-  uri: 'http://localhost:8080/v1/graphql',
+  uri: INDEXER_GRAPHQL_URL,
   cache: new InMemoryCache(),
 });
 

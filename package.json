@@ -8,15 +8,15 @@
     "watch": "graphql-codegen -w",
     "prebuild": "fuels build",
     "dev": "vite",
-    "build": "npm run prebuild && tsc -b && vite build",
+    "build": "tsc -b && vite build",
     "lint": "eslint .",
     "fuels:dev": "fuels dev",
     "test": "vitest"
   },
   "dependencies": {
     "@apollo/client": "^3.11.8",
-    "@fuels/connectors": "^0.26.0",
-    "@fuels/react": "^0.26.0",
+    "@fuels/connectors": "^0.29.2",
+    "@fuels/react": "^0.29.2",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-icons": "^1.3.0",
     "@radix-ui/react-label": "^2.1.0",

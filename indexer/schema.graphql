@@ -18,6 +18,11 @@ type Pool {
   id: ID!
   name: String!
   symbol: String!
+  description: String!
+  image: String!
+  twitter: String!
+  telegram: String!
+  website: String!
   asset: String!
   contract: String!
   createdBy: String!

@@ -5,6 +5,11 @@ export const ALL_POOLS_QUERY = gql(`query AllPools {
     id
     name
     symbol
+    description
+    image
+    twitter
+    telegram
+    website
     txId
     asset
     contract

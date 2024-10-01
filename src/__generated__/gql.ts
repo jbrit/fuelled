@@ -13,7 +13,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "query AllPools {\n  Pool {\n    id\n    name\n    symbol\n    txId\n    asset\n    contract\n    createdAt\n    createdBy\n    db_write_timestamp\n  }\n}": types.AllPoolsDocument,
+    "query AllPools {\n  Pool {\n    id\n    name\n    symbol\n    description\n    image\n    twitter\n    telegram\n    website\n    txId\n    asset\n    contract\n    createdAt\n    createdBy\n    db_write_timestamp\n  }\n}": types.AllPoolsDocument,
     "query AllTrades {\n  Trade {\n    createdAt\n    db_write_timestamp\n    ethAmount\n    id\n    token\n    tokenAmount\n    tradeType\n    trader\n    txId\n  }\n}": types.AllTradesDocument,
 };
 
@@ -34,7 +34,7 @@ export function gql(source: string): unknown;
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "query AllPools {\n  Pool {\n    id\n    name\n    symbol\n    txId\n    asset\n    contract\n    createdAt\n    createdBy\n    db_write_timestamp\n  }\n}"): (typeof documents)["query AllPools {\n  Pool {\n    id\n    name\n    symbol\n    txId\n    asset\n    contract\n    createdAt\n    createdBy\n    db_write_timestamp\n  }\n}"];
+export function gql(source: "query AllPools {\n  Pool {\n    id\n    name\n    symbol\n    description\n    image\n    twitter\n    telegram\n    website\n    txId\n    asset\n    contract\n    createdAt\n    createdBy\n    db_write_timestamp\n  }\n}"): (typeof documents)["query AllPools {\n  Pool {\n    id\n    name\n    symbol\n    description\n    image\n    twitter\n    telegram\n    website\n    txId\n    asset\n    contract\n    createdAt\n    createdBy\n    db_write_timestamp\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
