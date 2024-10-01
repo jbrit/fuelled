@@ -31,7 +31,7 @@ function Index() {
   const getTradeCount = (assetId: string) =>
     tradesData?.Trade.filter((trade) => trade.token === assetId).length;
   return (
-    <div className="grid grid-cols md:grid-cols-2 xl:grid-cols-3 gap-4">
+    <div className="grid grid-cols md:grid-cols-2 xl:grid-cols-3 gap-4 place-items-stretch">
       {!!poolsData &&
         !!tradesData &&
         poolsData.Pool.map((pool) => (
@@ -39,7 +39,7 @@ function Index() {
             className="no-underline hover:no-underline"
             href={`/${pool.asset}`}
           >
-            <Card className="hover:no-underline flex flex-col md:flex-row items-stretch md:items-center">
+            <Card className="hover:no-underline flex flex-col md:flex-row items-stretch md:items-center h-full">
               <div className="py-2 px-4">
                 <img
                   className="w-full md:w-44 h-auto object-cover"

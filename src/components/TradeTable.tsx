@@ -98,7 +98,7 @@ export function TradeTable({ trades, tokenName }: Props) {
                       {getTruncatedAddress(trade.trador)}
                     </TooltipTrigger>
                     <TooltipContent
-                      className="bg-slate-950 text-white rounded-none p-2"
+                      className="bg-slate-950 text-white rounded-none p-2 w-fit"
                       side="top"
                     >
                       <div className="bg-black text-white p-4 rounded-lg w-80 shadow-lg">

@@ -18,6 +18,14 @@ import { useActiveWallet } from "../hooks/useActiveWallet";
 import { Textarea } from "../components/Textarea"; // Import the functions you need from the SDKs you need
 import firebase from "firebase/app";
 import "firebase/storage";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -63,9 +71,24 @@ function Launch() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [moreOptions, setMoreOptions] = useState(false);
   const [assetId, setAssetId] = useState<string>();
+  const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const { wallet } = useActiveWallet();
   const memeFactorycontract =
     wallet && new MemeFactory(memeFactoryContractId, wallet);
+
+  const resetFields = () => {
+    setName("");
+    setSymbol("");
+    setDescription("");
+    setImage("");
+    setTwitter("");
+    setTelegram("");
+    setWebsite("");
+    setSelectedFile(null);
+    setNewCurve(undefined);
+    setAssetId("");
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFile = e.target.files;
@@ -98,6 +121,7 @@ function Launch() {
     }
 
     if (selectedFile) {
+      setLoading(true);
       const storageRef = _storageRef;
       const fileRef = storageRef.child(`uploads/${selectedFile.name}`);
 
@@ -124,6 +148,7 @@ function Launch() {
           await waitForResult();
           const newBondingCurve = new BondingCurve(contractId, wallet);
           setNewCurve(newBondingCurve);
+          setLoading(false);
           try {
             await memeFactorycontract.functions
               .set_bytecode_root({ bits: contractId })
@@ -147,6 +172,7 @@ function Launch() {
       return toast.error("Name, Symbol, description, imagerequired");
     }
     try {
+      setLoading(true);
       const assetId = createAssetId(newCurve.id.toHexString(), B256_ZERO).bits;
       await memeFactorycontract.functions
         .register_contract(
@@ -162,6 +188,8 @@ function Launch() {
         .addContracts([newCurve])
         .call();
       setAssetId(assetId);
+      setShowSuccess(true);
+      resetFields();
     } catch (error) {
       console.log(error);
       // @ts-ignore
@@ -169,12 +197,45 @@ function Launch() {
       if (message.includes('"RegisteredToken"')) {
         toast.error("Token Already Registered");
         setAssetId(assetId);
+        setShowSuccess(true);
+        resetFields();
       }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="flex flex-col gap-2 items-stretch max-w-[400px] mx-auto">
+      <Dialog open={showSuccess} onOpenChange={setShowSuccess}>
+        <DialogContent className="">
+          <DialogHeader>
+            <DialogTitle className="text-gray-300">
+              Asset successfully launched
+            </DialogTitle>
+            <DialogDescription className="text-gray-400 break-all">
+              Congrats, your asset has been deployed. You can now view your
+              asset in the homepage [board]
+            </DialogDescription>
+          </DialogHeader>
+          <div>
+            {!!assetId && (
+              <>
+                <Link href={`/${assetId}`}>View Asset</Link>
+              </>
+            )}
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={() => {
+                setShowSuccess(false);
+              }}
+            >
+              [close]
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <h3 className="text-2xl font-semibold mb-2">Launch A Coin</h3>
 
       <div className="flex flex-col justify-center">
@@ -287,7 +348,12 @@ function Launch() {
         </>
       ) : null}
 
-      <Button onClick={onLaunchPress} className="mt-4">
+      <Button
+        disabled={loading}
+        loading={loading}
+        onClick={onLaunchPress}
+        className="mt-4"
+      >
         &gt;&gt; Launch &lt;&lt;
       </Button>
 
@@ -299,14 +365,14 @@ function Launch() {
               {createAssetId(newCurve.id.toHexString(), B256_ZERO).bits}
             </div>
           </div>
-          <Button onClick={onFinishLaunchPress} className="mt-6">
+          <Button
+            disabled={loading}
+            loading={loading}
+            onClick={onFinishLaunchPress}
+            className="mt-6"
+          >
             &gt;&gt; Finalize Launch &lt;&lt;
           </Button>
-        </>
-      )}
-      {!!assetId && (
-        <>
-          <Link href={`/${assetId}`}>View Asset</Link>
         </>
       )}
     </div>

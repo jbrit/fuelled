@@ -56,6 +56,8 @@ function Index() {
       )
       .call();
 
+    console.log("eklkl");
+
     // Transfer the specified amount of ETH to the receiver address
     const tx = await faucetWallet!.transfer(
       receiverAddress,
