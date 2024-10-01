@@ -1,7 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-// Define the type for the OHLC data structure
 interface OHLCData {
   x: Date;
   y: [number, number, number, number]; // Open, High, Low, Close
@@ -10,7 +16,8 @@ interface OHLCData {
 // Function to generate random OHLC data for candlestick chart
 const generateOHLCData = (
   startTime: number,
-  numberOfCandles: number
+  numberOfCandles: number,
+  interval?: number | null
 ): OHLCData[] => {
   const data: OHLCData[] = [];
   let currentTime = startTime;
@@ -37,97 +44,138 @@ const generateOHLCData = (
     });
 
     // Increment time by 5 minutes (5 * 60 * 1000 ms)
-    currentTime += 5 * 60 * 1000;
+    currentTime += (interval ?? 5) * 60 * 1000;
   }
 
   return data;
 };
 
-const ApexChart: React.FC = () => {
-  // Set start time for the data (e.g., starting from a fixed date)
-  const startTime = new Date("2024-10-01T00:00:00").getTime();
+const CandlestickChart: React.FC = () => {
+  const startTime = new Date().getTime();
 
-  // Number of candlesticks to generate
-  const numberOfCandles = 100; // Adjust this number to generate more or fewer intervals
+  const [interval, setInterval] = useState<number | null>(null);
 
-  const [series] = useState([
+  const numberOfCandles = 100;
+
+  const [series, setSeries] = useState([
     {
-      data: generateOHLCData(startTime, numberOfCandles),
+      data: generateOHLCData(startTime, numberOfCandles, interval),
     },
   ]);
+
+  useEffect(() => {
+    setSeries([
+      { data: generateOHLCData(startTime, numberOfCandles, interval) },
+    ]);
+  }, [interval]);
 
   const [options] = useState<ApexCharts.ApexOptions>({
     chart: {
       type: "candlestick",
       height: 350,
-      background: "#000", // Sets chart background to black
+      background: "#000",
       toolbar: {
-        show: false, // Hides the toolbar
+        show: true,
+        tools: {},
       },
     },
-    title: {
-      text: "Candlestick Chart",
-      align: "left",
-      style: {
-        color: "#fff", // Title color white for visibility on black background
-      },
-    },
+    // title: {
+    //   text: "Candlestick Chart",
+    //   align: "left",
+    //   style: {
+    //     color: "#fff",
+    //   },
+    // },
     xaxis: {
       type: "datetime",
       labels: {
-        show: false, // Hides the x-axis labels
+        show: true,
+        style: {
+          fontSize: "13px",
+          colors: "#6b7280",
+        },
       },
       axisBorder: {
-        show: false, // Hides the axis line
+        show: false,
       },
       axisTicks: {
-        show: false, // Removes the ticks from the x-axis
+        show: false,
       },
     },
     yaxis: {
       tooltip: {
-        enabled: true, // Keeps tooltip enabled
+        enabled: true,
       },
       labels: {
-        show: false, // Hides y-axis labels
+        show: true,
+        style: {
+          fontSize: "13px",
+          colors: "#9ca3af",
+        },
+        // align: "right",
+        // offsetX: 50,
       },
+
+      opposite: true,
       axisBorder: {
-        show: false, // Hides the axis line
+        show: false,
       },
       axisTicks: {
-        show: false, // Removes the ticks from the y-axis
+        show: false,
       },
     },
     grid: {
       show: true,
-      borderColor: "#444", // Grid line color (grayish for contrast)
+      borderColor: "#444",
       xaxis: {
         lines: {
-          show: true, // Displays grid lines along the x-axis
+          show: true,
         },
       },
       yaxis: {
         lines: {
-          show: true, // Displays grid lines along the y-axis
+          show: true,
         },
       },
     },
     tooltip: {
       enabled: true,
-      theme: "dark", // Dark theme tooltip for consistency
+      theme: "dark",
       x: {
-        format: "dd MMM yyyy HH:mm", // Custom tooltip format for datetime
+        format: "dd MMM yyyy HH:mm",
       },
       y: {
         formatter: (value: number) => {
-          return `Price: ${value.toFixed(2)}`; // Custom format for y values
+          return `Price: ${value.toFixed(2)}`;
         },
       },
     },
   });
 
   return (
-    <div>
+    <div className="flex flex-col gap-2">
+      <Select
+        onValueChange={(value) => {
+          console.log(value);
+          setInterval(parseInt(value));
+        }}
+      >
+        <SelectTrigger className="w-[120px] h-[30px] bg-[#131722] relative z-[10000] translate-y-[30px]">
+          <SelectValue placeholder="Interval" />
+        </SelectTrigger>
+        <SelectContent
+          onChange={(e) => {
+            console.log(e);
+          }}
+          className="bg-[#131722] text-white"
+        >
+          <SelectItem className="" value="1">
+            1 minute
+          </SelectItem>
+          <SelectItem value="5">5 minutes</SelectItem>
+          <SelectItem value="10">10 minutes</SelectItem>
+        </SelectContent>
+      </Select>
       <ReactApexChart
         options={options}
         series={series}
@@ -138,4 +186,4 @@ const ApexChart: React.FC = () => {
   );
 };
 
-export default ApexChart;
+export default CandlestickChart;

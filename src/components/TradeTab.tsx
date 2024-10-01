@@ -31,6 +31,7 @@ type Props = {
 };
 
 export function TradeTab({ symbol, contract, asset }: Props) {
+  const [currency, setCurrency] = useState("ETH");
   const [showSlippage, setShowSlippage] = useState(false);
   const [slippage, setSlippage] = useState(0);
   const [buyAmount, setBuyAmount] = useState(0);
@@ -84,38 +85,69 @@ export function TradeTab({ symbol, contract, asset }: Props) {
         <TabsContent value="buy">
           <Card>
             <CardHeader>
-              <CardTitle>Buy ${symbol}</CardTitle>
+              <CardTitle>
+                Buy {currency !== "ETH" ? `$${symbol}` : "ETH"}
+              </CardTitle>
               {/* <CardDescription>...</CardDescription> */}
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="space-y-4">
-                <button
-                  onClick={() => {
-                    setShowSlippage(true);
-                  }}
-                  className="bg-fuel-green px-2 py-1 text-xs font-medium bg-opacity-50 hover:bg-opacity-100 transition-all text-white rounded-sm"
-                >
-                  Set max slippage
-                </button>
-                <Input
-                  id="buyAmount"
-                  value={buyAmount}
-                  onChange={(e) => setBuyAmount(parseInt(e.target.value))}
-                  type="number"
-                />
-                <div className="flex items-center gap-2">
-                  {[0, 1, 5, 10].map((n) => (
-                    <button
-                      key={n}
-                      onClick={() => {
-                        setBuyAmount(n);
-                      }}
-                      className="bg-fuel-green px-2 py-1 text-xs font-medium bg-opacity-50 hover:bg-opacity-100 transition-all text-white rounded-sm"
-                    >
-                      {n ? `${n} ETH` : "reset"}
-                    </button>
-                  ))}
+                <div className="flex items-center justify-between gap-2">
+                  <button
+                    onClick={() => {
+                      setCurrency((prev) => (prev === "ETH" ? symbol : "ETH"));
+                    }}
+                    className="bg-slate-600 px-2 py-1 text-xs font-medium bg-opacity-70 hover:bg-opacity-100 transition-all text-white rounded-sm"
+                  >
+                    switch to {currency === "ETH" ? `$${symbol}` : "ETH"}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowSlippage(true);
+                    }}
+                    className="bg-fuel-green px-2 py-1 text-xs font-medium bg-opacity-50 hover:bg-opacity-100 transition-all text-white rounded-sm"
+                  >
+                    Set max slippage
+                  </button>
                 </div>
+                <div className="relative">
+                  <Input
+                    id="buyAmount"
+                    value={buyAmount}
+                    onChange={(e) => setBuyAmount(parseInt(e.target.value))}
+                    type="number"
+                    className="appearance-none"
+                  />
+                  <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-200 text-lg font-bold">
+                    {currency !== "ETH" ? (
+                      `$${symbol}`
+                    ) : (
+                      <div className="flex items-center gap-1">
+                        <span>ETH</span>
+                        <img
+                          src="https://png.pngtree.com/png-vector/20210522/ourmid/pngtree-vector-illustration-of-crytocurrency-ethereum-png-image_3314668.jpg"
+                          width={20}
+                          height={20}
+                        />
+                      </div>
+                    )}
+                  </span>
+                </div>
+                {currency === "ETH" ? (
+                  <div className="flex items-center gap-2">
+                    {[0, 1, 5, 10].map((n) => (
+                      <button
+                        key={n}
+                        onClick={() => {
+                          setBuyAmount(n);
+                        }}
+                        className="bg-fuel-green px-2 py-1 text-xs font-medium bg-opacity-50 hover:bg-opacity-100 transition-all text-white rounded-sm"
+                      >
+                        {n ? `${n} ETH` : "reset"}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
                 <p className="text-base text-gray-500">28331683 ETH</p>
               </div>
             </CardContent>
@@ -168,12 +200,19 @@ export function TradeTab({ symbol, contract, asset }: Props) {
                 >
                   Set max slippage
                 </button>
-                <Input
-                  id="sellAmount"
-                  value={sellAmount}
-                  onChange={(e) => setSellAmount(parseInt(e.target.value))}
-                  type="number"
-                />
+
+                <div className="relative">
+                  <Input
+                    id="sellAmount"
+                    value={sellAmount}
+                    onChange={(e) => setSellAmount(parseInt(e.target.value))}
+                    type="number"
+                  />
+
+                  <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-200 text-lg font-bold">
+                    ${symbol}
+                  </span>
+                </div>
                 <div className="flex items-center gap-2">
                   {[0, 25, 50, 75, 100].map((n) => (
                     <button

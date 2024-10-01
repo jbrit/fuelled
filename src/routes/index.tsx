@@ -41,11 +41,7 @@ function Index() {
           >
             <Card className="hover:no-underline flex items-center">
               <div className="py-2 px-4">
-                <img
-                  className="w-44 h-auto"
-                  alt=""
-                  src={pool.image}
-                />
+                <img className="w-44 h-auto" alt="" src={pool.image ?? ""} />
               </div>
               <div>
                 <CardHeader>
