@@ -46,6 +46,7 @@ describe('Contract', () => {
       contracts: [contract, memefactory],
     } = launched;
     console.log("b256 address", contract.id.toString());
+    const contractIdInput = {bits: contract.id.toB256()};
 
     const contractAssetId = createAssetId(contract.id.toHexString(), B256_ZERO); // getMintedAssetId
     const baseAssetId = contract.provider.getBaseAssetId();
@@ -60,15 +61,15 @@ describe('Contract', () => {
 
     const {value: optionalbytecoderoot} = await memefactory.functions.factory_bytecode_root().get();
     if (optionalbytecoderoot === B256_ZERO) {
-      const {waitForResult: setBCRContractWait} = await memefactory.functions.set_bytecode_root({bits: contract.id.toB256()}).call();
+      const {waitForResult: setBCRContractWait} = await memefactory.functions.set_bytecode_root(contractIdInput).call();
       const {value: newbcr} = await setBCRContractWait();
       console.log("newbcr", newbcr);
     }
     // await contract.functions.initialize("MyAsset", "TOKEN").call()
-    const rc = await memefactory.functions.register_contract({bits: contract.id.toB256()}, "MyAsset", "TOKEN").addContracts([contract]).fundWithRequiredCoins();
+    const rc = await memefactory.functions.register_contract(contractIdInput, "MyAsset", "TOKEN").addContracts([contract]).fundWithRequiredCoins();
     console.log("maxFee", rc.maxFee.toBuffer("le", 8).readBigUInt64LE())
     console.log("gasLimit", rc.gasLimit.toBuffer("le", 8).readBigUInt64LE())
-    const {waitForResult: registerContractWait} = await memefactory.functions.register_contract({bits: contract.id.toB256()}, "MyAsset", "TOKEN").addContracts([contract]).call();
+    const {waitForResult: registerContractWait} = await memefactory.functions.register_contract(contractIdInput, "MyAsset", "TOKEN").addContracts([contract]).call();
     const {value: bytecoderoot} = await registerContractWait();
     console.log("bytecoderoot", bytecoderoot.Ok);
 
@@ -76,29 +77,29 @@ describe('Contract', () => {
     const ethIn = await ethInWait();
     console.log("expected eth in: ", BigInt(ethIn.value.toBuffer("le", 8).readBigUint64LE()))
     // {bits: contract.id.toB256()}
-    const contractIdInput = {bits: contract.id.toB256()};
-    const {waitForResult: buyWait} = await memefactory.functions.buy_token(contractIdInput,700_000_000,100_000_000).addContracts([contract]).callParams({
+    
+    const {waitForResult: buyWait} = await memefactory.functions.buy_token(contractIdInput,700_000_000,1_000_000_000).addContracts([contract]).callParams({
       forward: {
-        amount: 100_000_000,
+        amount: 1_000_000_000,
         assetId: baseAssetId,
       }
     }).call();
     const {value: realEthIn} = await buyWait();
-    console.log({realEthIn})
+    console.log({realEthIn: realEthIn.toBuffer("le", 8).readBigUInt64LE()})
     // await contract.functions.buy_token(700_000_000,100_000_000).callParams({
     //   forward: {
     //     amount: 100_000_000,
     //     assetId: baseAssetId,
     //   }
     // }).call();
-    expect((await getSupply())!).toBe(700000000n)
+    expect((await getSupply())!).toBe(700000000n*1000000000n)
 
-    await memefactory.functions.sell_token(contractIdInput,100_000_000,0).callParams({
+    await memefactory.functions.sell_token(contractIdInput,100_000_000,0).addContracts([contract]).callParams({
       forward: {
         amount: "100000000000000000",  // include decimals
         assetId: contractAssetId.bits,
       }
     }).call();
-    expect((await getSupply())!).toBe(600000000n)
+    expect((await getSupply())!).toBe(600000000n*1000000000n)
   });
 });

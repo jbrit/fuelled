@@ -7,7 +7,7 @@ networks:
   contracts:
   - name: MemeFactory
     address:
-    - 0xd23807d785daaa050ceec7273d05f72b9f480b3800776da854f7cd3854195698
+    - 0x082952480eaba33f45c2cda132f5e278ea6fab2b437ddb94242133406f2ab232
     abi_file_path: abis/memefactory-abi.json
     handler: src/EventHandlers.ts
     events:
