@@ -37,7 +37,7 @@ export const Route = createFileRoute("/$assetid")({
       data: tradesData,
       loading: tradesLoading,
       error: tradesError,
-    } = useGraphQuery(ALL_TRADES_QUERY, {pollInterval: 1000});
+    } = useGraphQuery(ALL_TRADES_QUERY, { pollInterval: 1000 });
 
     const filteredPoolInfos = poolsData?.Pool.filter(
       (pool) => pool.asset === assetid
@@ -60,9 +60,11 @@ export const Route = createFileRoute("/$assetid")({
       totalSupply && BONDING_CURVE_TOTAL_SUPPLY - totalSupply;
     const ethInCurve = tradesData?.Trade.reduce(
       (acc, trade) =>
-        trade.tradeType === "BUY"
-          ? acc.add(bn(trade.ethAmount))
-          : acc.sub(bn(trade.ethAmount)),
+        trade.token !== assetid
+          ? acc
+          : trade.tradeType === "BUY"
+            ? acc.add(bn(trade.ethAmount))
+            : acc.sub(bn(trade.ethAmount)),
       bn(0)
     ).toNumber();
     const curvePercent =
