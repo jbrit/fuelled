@@ -1,8 +1,8 @@
 import { createFileRoute, useLoaderData } from "@tanstack/react-router";
-import { MemeFactory } from "../sway-api";
-import { NODE_URL, TESTNET_MEME_FACTORY_CONTRACT_ID } from "../lib";
-import { Provider, toBech32 } from "fuels";
-import { useQuery } from "@apollo/client";
+import { BondingCurve, MemeFactory } from "../sway-api";
+import { BONDING_CURVE_TOTAL_SUPPLY, NODE_URL, TESTNET_MEME_FACTORY_CONTRACT_ID } from "../lib";
+import { Provider, bn } from "fuels";
+import { useQuery as useGraphQuery } from "@apollo/client";
 import { ALL_POOLS_QUERY, ALL_TRADES_QUERY } from "../queries";
 import moment from "moment";
 import { TradeTab } from "../components/TradeTab";
@@ -11,46 +11,48 @@ import { TradeTable } from "../components/TradeTable";
 import CandlestickChart from "../components/CandlestickChart";
 import toast from "react-hot-toast";
 import { useRef } from "react";
+import { useActiveWallet } from "../hooks/useActiveWallet";
+import { useQuery } from "@tanstack/react-query";
 
 const memeFactoryContractId = TESTNET_MEME_FACTORY_CONTRACT_ID;
 
 export const Route = createFileRoute("/$assetid")({
   component: () => {
     const { contract, assetid } = useLoaderData({ from: "/$assetid" });
+    const { wallet } = useActiveWallet();
+    const curveContract = wallet && new BondingCurve(contract.bits, wallet);
     const buttonRef = useRef<HTMLButtonElement>(null);
 
     const {
       data: poolsData,
       loading: poolsLoading,
       error: poolsError,
-    } = useQuery(ALL_POOLS_QUERY);
+    } = useGraphQuery(ALL_POOLS_QUERY);
     const {
       data: tradesData,
       loading: tradesLoading,
       error: tradesError,
-    } = useQuery(ALL_TRADES_QUERY);
+    } = useGraphQuery(ALL_TRADES_QUERY);
 
     const filteredPoolInfos = poolsData?.Pool.filter(
       (pool) => pool.asset === assetid
     );
     const poolInfo = filteredPoolInfos?.length ? filteredPoolInfos[0] : null;
-    console.log({ contract, assetid });
-    console.log(poolsData?.Pool.filter((pool) => pool.asset === assetid));
 
-    console.log(assetid, poolInfo);
+    const {data: totalSupply} = useQuery({
+      queryKey: ["totalSupply", assetid],
+      queryFn: async () => ((await curveContract!.functions.total_supply({bits:assetid}).get()).value ??  bn(0)).div(bn(1e9)).toNumber(),
+      refetchInterval: 1000,
+      enabled: !!curveContract
+    });
+    const tokensAvailable = totalSupply && BONDING_CURVE_TOTAL_SUPPLY - totalSupply;
+    const ethInCurve = tradesData?.Trade.reduce((acc, trade) => trade.tradeType === "BUY" ? acc.add(bn(trade.ethAmount)) : acc.add(bn(trade.ethAmount)), bn(0)).toNumber();
+    const curvePercent = totalSupply && Math.floor(100 * totalSupply / BONDING_CURVE_TOTAL_SUPPLY);
+    console.log((ethInCurve && ethInCurve / 1e9), tokensAvailable, curvePercent) // NOTE(@thatdeji): comma separate tokensAvailable
     return (
       <div>
         {!!poolInfo && !!tradesData && (
           <>
-            {/* <div className="flex flex-col md:flex-row gap-4 mb-12">
-              <span className="inline-block">
-                {poolInfo.name} [symbol: {poolInfo.symbol}]
-              </span>
-              <span className="inline-block md:ml-auto">
-                Created By: {getTruncatedAddress(poolInfo.createdBy)} about{" "}
-                {moment(poolInfo.createdAt * 1000).fromNow()}
-              </span>
-            </div> */}
             <div className="mb-4 md:mb-8 lg:mb-10 w-full flex flex-col lg:flex-row flex-nowrap gap-5 md:gap-10 xl:gap-20">
               <div className="w-full lg:w-2/3">
                 <div className="flex flex-col gap-3">
