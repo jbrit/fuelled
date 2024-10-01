@@ -37,7 +37,7 @@ export const Route = createFileRoute("/$assetid")({
       data: tradesData,
       loading: tradesLoading,
       error: tradesError,
-    } = useGraphQuery(ALL_TRADES_QUERY);
+    } = useGraphQuery(ALL_TRADES_QUERY, {pollInterval: 1000});
 
     const filteredPoolInfos = poolsData?.Pool.filter(
       (pool) => pool.asset === assetid
