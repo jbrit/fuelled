@@ -37,7 +37,7 @@ export const Route = createFileRoute("/$assetid")({
       data: tradesData,
       loading: tradesLoading,
       error: tradesError,
-    } = useGraphQuery(ALL_TRADES_QUERY, { pollInterval: 1000 });
+    } = useGraphQuery(ALL_TRADES_QUERY, { pollInterval: 500 });
 
     const filteredPoolInfos = poolsData?.Pool.filter(
       (pool) => pool.asset === assetid
@@ -70,7 +70,59 @@ export const Route = createFileRoute("/$assetid")({
     const curvePercent =
       totalSupply &&
       Math.floor((100 * totalSupply) / BONDING_CURVE_TOTAL_SUPPLY);
-    console.log(ethInCurve && ethInCurve / 1e9, tokensAvailable, curvePercent); // NOTE(@thatdeji): comma separate tokensAvailable
+
+    const getOhlc = (minutes: number) => tradesData?.Trade.filter(
+      (trade) => trade.token === assetid
+    ).reduce(
+      (acc, trade) => {
+        acc.totalSupply =
+          trade.tradeType === "BUY"
+            ? acc.totalSupply + parseInt(trade.tokenAmount)
+            : acc.totalSupply - parseInt(trade.tokenAmount);
+        const minute = 60 * minutes * Math.floor(trade.createdAt / (60 * minutes));
+        let price = 3 * acc.totalSupply**2 / (343 * 1e24);
+        const inversePrice = 343*1e24/(3 * acc.totalSupply**2);
+        price = 1/ inversePrice;
+
+        let currentDate = moment.unix(minute).toDate();
+        if (acc.ohlc.length === 0){
+          acc.ohlc.push({
+            x: currentDate,
+            y: [price, price, price, price]
+          })
+        } else {
+          let lastOhlc = acc.ohlc[acc.ohlc.length-1];
+          if (currentDate.getTime() === lastOhlc.x.getTime()) {
+            if ( price > lastOhlc.y[1]) {  // high
+              lastOhlc.y[1] = price;
+            } else if ( price < lastOhlc.y[2]) {  // low
+              lastOhlc.y[2] = price;
+            }
+            lastOhlc.y[3] = price;  // close
+          } else {
+            let newDate = lastOhlc.x;
+            // increase until current date...
+            while (newDate.getTime() < currentDate.getTime()){
+              newDate = new Date(newDate.getTime() + 60_000 * minutes);  // old date + 1 minute
+              // create the next entry, until trade is used
+
+              lastOhlc = {
+                x: newDate,
+                y : newDate.getTime() ===  currentDate.getTime() ? [lastOhlc.y[3], Math.max(price, lastOhlc.y[3]), Math.min(price, lastOhlc.y[3]), price] : [lastOhlc.y[3], lastOhlc.y[3], lastOhlc.y[3], lastOhlc.y[3]]
+              }
+              acc.ohlc.push(lastOhlc)
+            }
+          }
+        }
+
+
+        return acc;
+      },
+      {
+        totalSupply: 0,
+        ohlc: [] as { x: Date; y: [number, number, number, number] }[],
+      }
+    ).ohlc;
     return (
       <div>
         {!!poolInfo && !!tradesData && (
@@ -125,7 +177,7 @@ export const Route = createFileRoute("/$assetid")({
                       about {moment(poolInfo.createdAt * 1000).fromNow()}
                     </p>
                   </div>
-                  <CandlestickChart />
+                  <CandlestickChart getOhlc={getOhlc} />
                 </div>
               </div>
               <div className="w-full lg:w-1/3 flex flex-col gap-4">
@@ -202,7 +254,7 @@ export const Route = createFileRoute("/$assetid")({
                   createdAt: trade.createdAt,
                   txId: trade.txId,
                 })
-              )}
+              ).toReversed()}
             />
           </>
         )}

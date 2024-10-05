@@ -21,13 +21,13 @@ function Index() {
     data: poolsData,
     loading: poolsLoading,
     error: poolsError,
-  } = useQuery(ALL_POOLS_QUERY);
+  } = useQuery(ALL_POOLS_QUERY, {pollInterval: 1000});
 
   const {
     data: tradesData,
     loading: tradesLoading,
     error: tradesError,
-  } = useQuery(ALL_TRADES_QUERY);
+  } = useQuery(ALL_TRADES_QUERY, {pollInterval: 1000});
   const getTradeCount = (assetId: string) =>
     tradesData?.Trade.filter((trade) => trade.token === assetId).length;
   return (

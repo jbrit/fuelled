@@ -108,7 +108,6 @@ export function TradeTable({ trades, tokenName }: Props) {
             pnlInToken,
           } = traderTxn(trade.trador);
           return (
-            // TODO: change key
             <TableRow key={trade.id}>
               <TableCell className="font-medium">
                 <TooltipProvider>
@@ -179,7 +178,18 @@ export function TradeTable({ trades, tokenName }: Props) {
               </TableCell>
               <TableCell>{trade.ethAmount}</TableCell>
               <TableCell>{trade.tokenAmount}</TableCell>
-              <TableCell>{moment(trade.createdAt * 1000).fromNow()}</TableCell>
+              <TableCell>
+                <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>{moment(trade.createdAt * 1000).fromNow()}</TooltipTrigger>
+                      <TooltipContent
+                      className="bg-slate-950 text-white rounded-none p-2 min-w-[300px]"
+                      side="top">
+                        {moment(trade.createdAt * 1000).format('DD MMM YYYY HH:mm ZZ')}
+                      </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+              </TableCell>
               <TableCell className="text-right">
                 <>
                   <Link

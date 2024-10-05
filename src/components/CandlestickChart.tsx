@@ -13,67 +13,15 @@ interface OHLCData {
   y: [number, number, number, number]; // Open, High, Low, Close
 }
 
-// Function to generate random OHLC data for candlestick chart
-const generateOHLCData = (
-  startTime: number,
-  numberOfCandles: number,
-  interval?: number | null
-): OHLCData[] => {
-  const data: OHLCData[] = [];
-  let currentTime = startTime;
-  let prevClose: null | number = null;
+type Props = {
+  getOhlc: (minutes: number) => undefined | OHLCData[]
+}
 
-  for (let i = 0; i < numberOfCandles; i++) {
-    const open =
-      prevClose ||
-      parseFloat((Math.random() * (10000 - 6500) + 6500).toFixed(2));
-    const close = parseFloat(
-      (Math.random() * (10000 - 6500) + 6500).toFixed(2)
-    );
-    const high = Math.max(
-      open,
-      close,
-      parseFloat((Math.random() * (10000 - 6500) + 6500).toFixed(2))
-    );
-    const low = Math.min(
-      open,
-      close,
-      parseFloat((Math.random() * (10000 - 6500) + 6500).toFixed(2))
-    );
+const CandlestickChart: React.FC<Props> = ({getOhlc}) => {
 
-    prevClose = close;
-
-    data.push({
-      x: new Date(currentTime),
-      y: [open, high, low, close],
-    });
-
-    // Increment time by 5 minutes (5 * 60 * 1000 ms)
-    currentTime += (interval ?? 5) * 60 * 1000;
-  }
-
-  return data;
-};
-
-const CandlestickChart: React.FC = () => {
-  const startTime = new Date().getTime();
-
-  const [interval, setInterval] = useState<number | null>(null);
-
-  const numberOfCandles = 100;
-
-  const [series, setSeries] = useState([
-    {
-      data: generateOHLCData(startTime, numberOfCandles, interval),
-    },
-  ]);
-
-  useEffect(() => {
-    setSeries([
-      { data: generateOHLCData(startTime, numberOfCandles, interval) },
-    ]);
-  }, [interval]);
-
+  const [interval, setInterval] = useState<number>(5);
+  const series = [{data: (getOhlc(interval) ?? []).toReversed().slice(0, 40).toReversed() }];
+  console.log("series changed")
   const [options] = useState<ApexCharts.ApexOptions>({
     chart: {
       type: "candlestick",
@@ -108,6 +56,7 @@ const CandlestickChart: React.FC = () => {
       },
     },
     yaxis: {
+      max: 5 / 1e9,
       tooltip: {
         enabled: true,
       },
@@ -160,6 +109,7 @@ const CandlestickChart: React.FC = () => {
   return (
     <div className="flex flex-col gap-2">
       <Select
+        value={interval.toString()}
         onValueChange={(value) => {
           console.log(value);
           setInterval(parseInt(value));
