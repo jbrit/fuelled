@@ -82,7 +82,7 @@ export const Route = createFileRoute("/$assetid")({
         const minute = 60 * minutes * Math.floor(trade.createdAt / (60 * minutes));
         let price = 3 * acc.totalSupply**2 / (343 * 1e24);
         const inversePrice = 343*1e24/(3 * acc.totalSupply**2);
-        price = 1/ inversePrice;
+        price = parseFloat((1/ inversePrice).toFixed(11));
 
         let currentDate = moment.unix(minute).toDate();
         if (acc.ohlc.length === 0){
@@ -100,18 +100,22 @@ export const Route = createFileRoute("/$assetid")({
             }
             lastOhlc.y[3] = price;  // close
           } else {
-            let newDate = lastOhlc.x;
-            // increase until current date...
-            while (newDate.getTime() < currentDate.getTime()){
-              newDate = new Date(newDate.getTime() + 60_000 * minutes);  // old date + 1 minute
-              // create the next entry, until trade is used
+            acc.ohlc.push({
+              x: currentDate,
+              y: [lastOhlc.y[3], Math.max(lastOhlc.y[3], price), Math.min(lastOhlc.y[3],price), price]
+            })
+            // let newDate = lastOhlc.x;
+            // // increase until current date...
+            // while (newDate.getTime() < currentDate.getTime()){
+            //   newDate = new Date(newDate.getTime() + 60_000 * minutes);  // old date + 1 minute
+            //   // create the next entry, until trade is used
 
-              lastOhlc = {
-                x: newDate,
-                y : newDate.getTime() ===  currentDate.getTime() ? [lastOhlc.y[3], Math.max(price, lastOhlc.y[3]), Math.min(price, lastOhlc.y[3]), price] : [lastOhlc.y[3], lastOhlc.y[3], lastOhlc.y[3], lastOhlc.y[3]]
-              }
-              acc.ohlc.push(lastOhlc)
-            }
+            //   lastOhlc = {
+            //     x: newDate,
+            //     y : newDate.getTime() ===  currentDate.getTime() ? [lastOhlc.y[3], Math.max(price, lastOhlc.y[3]), Math.min(price, lastOhlc.y[3]), price] : [lastOhlc.y[3], lastOhlc.y[3], lastOhlc.y[3], lastOhlc.y[3]]
+            //   }
+            //   acc.ohlc.push(lastOhlc)
+            // }
           }
         }
 

@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import moment from "moment";
 
 interface OHLCData {
   x: Date;
@@ -40,12 +41,15 @@ const CandlestickChart: React.FC<Props> = ({getOhlc}) => {
     //   },
     // },
     xaxis: {
-      type: "datetime",
+      type: "category",
       labels: {
         show: true,
         style: {
           fontSize: "13px",
           colors: "#6b7280",
+        },
+        formatter: (val) => {
+          return moment(val).format("DD MMM HH:mm")
         },
       },
       axisBorder: {
@@ -57,6 +61,7 @@ const CandlestickChart: React.FC<Props> = ({getOhlc}) => {
     },
     yaxis: {
       max: 5 / 1e9,
+      min: 0,
       tooltip: {
         enabled: true,
       },
@@ -66,6 +71,7 @@ const CandlestickChart: React.FC<Props> = ({getOhlc}) => {
           fontSize: "13px",
           colors: "#9ca3af",
         },
+        formatter: (val) => val.toFixed(11)
         // align: "right",
         // offsetX: 50,
       },
