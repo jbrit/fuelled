@@ -111,6 +111,11 @@
     -moz-appearance: textfield;
   }
 }
+@layer utilities {
+  .stroke-transparent-text {
+    -webkit-text-stroke: 5px transparent;
+  }
+}
 .apexcharts-menu-item {
   @apply text-white;
 }

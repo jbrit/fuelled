@@ -38,9 +38,13 @@ function Index() {
   return (
     <div>
       <div className="mb-10 mx-auto">
-        <h1 className="text-3xl font-bold text-center text-fuel-green mb-4">
-          [ [ <span className="text-white">LATEST</span> ] ]
+        <h1
+          className="relative max-w-[300px] skew-x-6 bg-black px-10 py-1 mb-10 border-4 border-fuel-green bg-gradient-2 stroke stroke-transparent-text bg-clip-text text-black font-bold text-4xl text-center mx-auto stroke-effect 
+    shadow-[-10px_-10px_0px_#4ade80] animate-skew"
+        >
+          NEW <br /> DROP
         </h1>
+
         {!!poolsData && poolsData.Pool.length && (
           <div className="flex justify-center items-center gap-4">
             <img
