@@ -115,7 +115,7 @@ function Index() {
               <Card className="hover:no-underline flex flex-col md:flex-row items-stretch md:items-center h-full">
                 <div className="py-2 px-4">
                   <img
-                    className="w-full md:w-44 h-auto object-cover"
+                    className="w-full md:w-44 md:h-44 h-auto object-cover"
                     alt=""
                     src={pool.image ?? ""}
                   />
