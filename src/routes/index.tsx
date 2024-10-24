@@ -55,7 +55,7 @@ function Index() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  fuelled by {getTruncatedAddress(pool.createdBy)} [
+                  yeeted by {getTruncatedAddress(pool.createdBy)} [
                   {moment(pool.createdAt * 1000).fromNow()}]
                 </CardContent>
                 <CardFooter className="text-gray-400 text-sm">

@@ -10,9 +10,9 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
           <Navbar />
           <div className="">{children}</div>
           <footer className="mt-auto flex justify-between items-center">
-            <p>&copy; fuelled.cash 2024</p>
+            <p>&copy; yeet finance 2024</p>
             <a
-              href="https://x.com/fuelleddotcash"
+              href="https://x.com/jibolaojo"
               target="_blank"
               className="no-underline hover:text-fuel-green hover:underline"
             >
